@@ -1,15 +1,18 @@
 #include "Client.hpp"
 
-Client::Client() : server(defaultServer)
+Client::Client()
 {
 }
 
-Client::Client(const Client &c) : server(defaultServer)
+Client::Client(const Client &c)
 {
+	(void)c;
 }
 
 Client& Client::operator=(const Client &c)
 {
+	(void)c;
+
 	return *this;
 }
 

@@ -15,10 +15,9 @@ public:
 	Client& operator=(const Client &c);
 	~Client();
 
-	int conn_fd;
+	int fd;
 	std::string buffer;
-	Server &server;
-	static Server defaultServer;
+	Server *server;
 };
 
 #endif
