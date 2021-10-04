@@ -1,5 +1,5 @@
-#ifndef SOCKETS_H
-# define SOCKETS_H
+#ifndef SOCKETS_HPP
+# define SOCKETS_HPP
 
 # include <unistd.h>
 # include <sys/select.h>
@@ -16,27 +16,29 @@
 # include "Client.hpp"
 # include "Server.hpp"
 
+class Client;
+
 class Sockets
 {
-private:
-	
-public:
-	Sockets();
-	Sockets(const Sockets &c);
-	Sockets& operator=(const Sockets &c);
-	~Sockets();
+	private:
+		fd_set	active_set;
+		fd_set	ready_set;
+		int		ready_fd;
+		int		max_fd;	
+	public:
+		Sockets();
+		Sockets(const Sockets &c);
+		Sockets& operator=(const Sockets &c);
+		~Sockets();
 
-	int init(std::vector<Server*> servers);
-	int add_client(Client& client);
-	int check_clients();
+		int init(std::vector<Server*> servers);
+		int add_client(Client& client);
+		int check_clients();
+		void	loop();
 
-	fd_set	active_set;
-	fd_set	ready_set;
-	int		ready_fd;
-	int		max_fd;
-	std::vector<int> fd_list;
-	std::vector<Client*> clients;
-	std::vector<Server*> servers;
+		std::vector<int> fd_list;
+		std::vector<Client*> clients;
+		std::vector<Server*> servers;
 
 };
 

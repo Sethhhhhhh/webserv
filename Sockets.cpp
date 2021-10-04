@@ -68,15 +68,15 @@ int Sockets::init(std::vector<Server*> parsed)
 	}
 }
 
-int Sockets::add_client(Client& client)
+int Sockets::add_client(Client	&client)
 {
 	ready_fd--;
 	if (servers.size() + clients.size() < FD_SETSIZE)
 	{
-		FD_SET(client.fd, &active_set);
-		fd_list.insert(fd_list.end(), client.fd);
+		FD_SET(client._fd, &active_set);
+		fd_list.push_back(client._fd);
 		max_fd = *std::max_element(fd_list.begin(), fd_list.end());
-		clients.insert(clients.end(), &client);
+		clients.push_back(&client);
 	}
 	else
 	{
@@ -94,12 +94,38 @@ int Sockets::check_clients()
 	for (std::vector<Client*>::iterator i = clients.begin(); i != clients.end();
 		i++)
 	{
-		if (FD_ISSET((*i)->fd, &ready_set))
+		if (FD_ISSET((*i)->_fd, &ready_set))
 		{
-			std::cout << "fd: " << (*i)->fd << std::endl;
-			ret = recv((*i)->fd, buf, 1024, 0);
+			std::cout << "fd: " << (*i)->_fd << std::endl;
+			ret = recv((*i)->_fd, (*i)->_buffer, 1024, 0);
 			std::cout << "buf: " << buf << std::endl;
 		}
 	}
 	return 0;
+}
+
+void	Sockets::loop(void)
+{
+	while (1)
+	{
+		ready_set = active_set;
+		ready_fd = select(max_fd + 1, &ready_set, 0, 0, 0);
+		for (std::vector<Server*>::iterator i = servers.begin();
+			i != servers.end(); i++)
+		{
+			if (FD_ISSET((*i)->fd, &ready_set))
+			{
+				Client *new_client;
+				new_client = new Client;
+				(*new_client)._fd = accept((*i)->fd, 0, 0);
+				if ((*new_client)._fd != -1)
+				{
+					std::cout << "Connection accepted." << std::endl;
+					(*new_client)._server = *i;
+					add_client((*new_client));
+				}
+			}
+		}
+		check_clients();
+	}
 }
