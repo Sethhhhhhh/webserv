@@ -3,13 +3,14 @@ NAME	=	webserv
 SRCS	=	main.cpp \
 			Server.cpp \
 			Sockets.cpp \
+			Tools.cpp \
 			Client.cpp
 
 OBJS	=	$(SRCS:.cpp=.o)
 
 CC		=	clang++
 
-FLAGS	=	-Wall -Werror -Wextra -std=c++98	
+FLAGS	=	-Wall -Werror -Wextra -std=c++98
 
 %.o:		%.cpp
 			$(CC) $(FLAGS) -c $< -o $@

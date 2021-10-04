@@ -1,7 +1,7 @@
 #include "Sockets.hpp"
 
 
-Sockets::Sockets() 
+Sockets::Sockets()
 {
 }
 
@@ -96,9 +96,12 @@ int Sockets::check_clients()
 	{
 		if (FD_ISSET((*i)->_fd, &ready_set))
 		{
+			std::stringstream ss;
 			std::cout << "fd: " << (*i)->_fd << std::endl;
-			ret = recv((*i)->_fd, (*i)->_buffer, 1024, 0);
-			std::cout << "buf: " << buf << std::endl;
+			ret = recv((*i)->_fd, buf, 1024, 0);
+			ss << buf;
+			(*i)->_buffer = ss.str();
+			(*i)->parse();
 		}
 	}
 	return 0;
