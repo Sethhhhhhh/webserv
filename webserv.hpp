@@ -23,4 +23,11 @@
 # define	BODY	2
 # define	DONE	3
 
+typedef struct  s_chunk
+{
+    int         length;
+	int			status;
+
+}               t_chunk;
+
 #endif

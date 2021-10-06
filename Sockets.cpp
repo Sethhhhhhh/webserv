@@ -88,7 +88,7 @@ int Sockets::add_client(Client	&client)
 
 int Sockets::check_clients()
 {
-	char buf[1024];
+	char buf[100000];
 	int ret;
 
 	for (std::vector<Client*>::iterator i = clients.begin(); i != clients.end();
@@ -98,7 +98,7 @@ int Sockets::check_clients()
 		{
 			std::stringstream ss;
 			std::cout << "fd: " << (*i)->_fd << std::endl;
-			ret = recv((*i)->_fd, buf, 1024, 0);
+			ret = recv((*i)->_fd, buf, 100000, 0);
 			ss << buf;
 			(*i)->_buffer = ss.str();
 			(*i)->parse();

@@ -19,7 +19,8 @@ class Client
 		std::string 						_uri;
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
-		int									_ret;
+		int									_ret_code;
+		t_chunk								_chunk;
 
 	public:
 
@@ -32,6 +33,15 @@ class Client
 		void	print_request(void);
 		void	check_parsing(void);
 		void	parse_body(void);
+		void	parse_chunked_body(void);
+
+		enum         status
+		{
+			UNCHUNKED,
+			BEGIN,
+			FOUND,
+			FINISHED
+		};
 
 	friend class Sockets;
 };

@@ -2,6 +2,7 @@
 
 Client::Client() : _status(START)
 {
+	_chunk.status = Client::UNCHUNKED;
 }
 
 Client::Client(const Client &c) : _fd(c._fd), _buffer(c._buffer), _server(c._server)
@@ -28,19 +29,84 @@ void		Client::check_parsing(void)
 		&& _method != "HEAD" && _method != "PUT"
 		&& _method != "CONNECT" && _method != "TRACE"
 		&& _method != "OPTIONS" && _method != "DELETE"))
-		_ret = 400;
+		_ret_code = 400;
 	if (_uri.length() == 0 || _uri[0] != '/')
-		_ret = 400;
+		_ret_code = 400;
 	if (_version.length() == 0 || (_version != "HTTP/1.1\r" && _version != "HTTP/1.1"))
-		_ret = 400;
+		_ret_code = 400;
 	if (_headers.find("Host") == _headers.end())
-		_ret = 400;
-	_ret = 200;
+		_ret_code = 400;
+	_ret_code = 200;
 }
 
 void	Client::parse_body()
 {
-	//parse based on content type
+	if (_headers.find("Content-Length") != _headers.end())
+	{
+		unsigned long length = atoi(_headers.find("Content-Length")->second.c_str());
+
+		if (_buffer.length() == length)
+		{
+			_body += _buffer;
+			_ret_code = 200;
+			
+		}
+		else
+			_ret_code = 400;
+		_status = DONE;
+	}
+	else if (_headers.find("Transfer-Encoding") != _headers.end())
+	{
+		parse_chunked_body();
+	}
+}
+
+void		Client::parse_chunked_body(void)
+{
+	if (_chunk.status == Client::UNCHUNKED)
+			_chunk.status = Client::BEGIN;
+		while (_buffer.size() != 0 && (_chunk.status != Client::FINISHED))
+		{
+			switch (_chunk.status)
+			{
+				case Client::BEGIN :
+				{
+					std::stringstream strm;
+					unsigned int count;
+
+					strm.str("");
+					strm << std::hex << cut_line(_buffer, true, 0);
+					strm >> count;
+
+					if (count == 0)
+					{
+						_chunk.status = Client::FINISHED;
+						_status = DONE;
+					}
+					else
+					{
+						_chunk.status = Client::FOUND;
+						_chunk.length = count;
+					}
+					break;
+				}
+				case Client::FOUND :
+					if (_buffer.size() >= (unsigned long)_chunk.length)
+					{
+						_body += _buffer.substr(0, _chunk.length);
+						_buffer.erase(0, _chunk.length + 2);
+						_chunk.status = Client::BEGIN;
+					}
+					else
+					{
+						_body += _buffer;
+						_chunk.length -= _buffer.size();
+						_buffer.erase(_buffer.begin(), _buffer.end());
+						_chunk.status = Client::FOUND;
+					}
+					break;
+			}
+		}
 }
 
 void		Client::parse(void)
@@ -68,18 +134,19 @@ void		Client::parse(void)
 		line = cut_line(_buffer, true, 0);
 	}
 	_status = BODY;
-	print_request();
 	check_parsing();
 	if (_method == "POST" && _status == BODY)
 		parse_body();
 	else
 		_status = DONE;
+	print_request();
 }
 
 
 void	Client::print_request(void)
 {
 	std::cout << "method : " << _method << std::endl;
+	std::cout << "URI : " << _uri << std::endl;
 	std::cout << "version : " << _version << std::endl;
 	std::cout << "headers :" << std::endl;
 	std::map<std::string, std::string>::iterator it = _headers.begin();
@@ -87,4 +154,6 @@ void	Client::print_request(void)
 	{
 		std::cout << it->first << " : " << it->second << std::endl;
 	}
+	std::cout << "body :\n" << std::endl;
+	std::cout << _body << std::endl;
 }
