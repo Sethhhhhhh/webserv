@@ -1,8 +1,7 @@
 #ifndef SERVER_H
 # define SERVER_H
 
-# include <iostream>
-# include <string>
+# include "Connections.hpp"
 
 class Server
 {
@@ -14,6 +13,8 @@ public:
 	Server& operator=(const Server &c);
 	~Server();
 
+	void respond(int fd, Request &request);
+	
 	int fd;
 	int host;
 	int port;

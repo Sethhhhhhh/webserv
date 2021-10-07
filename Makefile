@@ -4,6 +4,7 @@ SRCS	=	main.cpp \
 			Server.cpp \
 			Connections.cpp \
 			Tools.cpp \
+			Request.cpp \
 			Client.cpp
 
 OBJS	=	$(SRCS:.cpp=.o)

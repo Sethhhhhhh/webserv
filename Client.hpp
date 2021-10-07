@@ -7,45 +7,28 @@
 # include "Server.hpp"
 # include "Connections.hpp"
 
+class Server;
+
 class Client
 {
 	private:
-		int 								_fd;
-		std::string							_buffer;
-		Server* 							_server;
-		int									_status;
-		std::string							_method;
-		std::string							_version;
-		std::string 						_uri;
-		std::map<std::string, std::string>	_headers;
-		std::string							_body;
-		std::string							_lan;
-		int									_ret_code;
-		t_chunk								_chunk;
+		int 				_fd;
+		Server* 			_server;
+		Request				_request;
 
 	public:
 
 		Client();
+		Client(int fd, Server *server);
 		Client(const Client &c);
 		Client& operator=(const Client &c);
 		~Client();
 
-		void		parse(void);
-		void	print_request(void);
-		void	check_parsing(void);
-		void	parse_body(void);
-		void	parse_chunked_body(void);
-		void	parse_language(void);
+		void	receive_request(void);
+		void	wait_response(void);
+		int		get_fd(void) const;
 
-		enum         status
-		{
-			UNCHUNKED,
-			BEGIN,
-			FOUND,
-			FINISHED
-		};
 
-	friend class Connections;
 };
 
 #endif

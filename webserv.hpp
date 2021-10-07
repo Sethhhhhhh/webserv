@@ -15,6 +15,7 @@
 # include <string>
 # include <algorithm>
 # include <vector>
+# include <list>
 # include <map>
 # include <sstream>
 # include <fstream>

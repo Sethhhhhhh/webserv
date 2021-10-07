@@ -3,9 +3,11 @@
 
 # include "webserv.hpp"
 
+# include "Request.hpp"
 # include "Client.hpp"
 # include "Server.hpp"
 
+class Server;
 class Client;
 
 class Connections
@@ -15,6 +17,7 @@ class Connections
 		fd_set	ready_set;
 		int		ready_fd;
 		int		max_fd;
+		
 	public:
 		Connections();
 		Connections(const Connections &c);
@@ -22,11 +25,11 @@ class Connections
 		~Connections();
 
 		int init(std::vector<Server*> servers);
-		int add_client(Client& client);
+		int add_client(Server &server);
 		int check_clients();
 		void	loop();
 
-		std::vector<int> fd_list;
+		std::list<int> fd_list;
 		std::vector<Client*> clients;
 		std::vector<Server*> servers;
 

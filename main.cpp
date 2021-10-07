@@ -7,7 +7,7 @@ int	main()
 	Server test;
 
 	test.port = 1234;
-	servers.insert(servers.end(), &test);
+	servers.push_back(&test);
 
 	// if (parse(servers, "pathtoconfig") == -1)
 	// 	return 1;
