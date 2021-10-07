@@ -22,6 +22,16 @@
 
 # include "Tools.hpp"
 
+#ifndef __APPLE__
+
+#define	TIME	st_mtime
+
+#else
+
+#define	TIME	st_mtimespec
+
+#endif
+
 # define	START 	0
 # define	HEADERS	1
 # define	BODY	2
