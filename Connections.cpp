@@ -1,29 +1,29 @@
-#include "Sockets.hpp"
+#include "Connections.hpp"
 
 
-Sockets::Sockets()
+Connections::Connections()
 {
 }
 
-Sockets::Sockets(const Sockets &c)
+Connections::Connections(const Connections &c)
 {
 	(void)c;
 
 }
 
 
-Sockets& Sockets::operator=(const Sockets &c)
+Connections& Connections::operator=(const Connections &c)
 {
 	(void)c;
 
 	return *this;
 }
 
-Sockets::~Sockets()
+Connections::~Connections()
 {
 }
 
-int Sockets::init(std::vector<Server*> parsed)
+int Connections::init(std::vector<Server*> parsed)
 {
 	struct sockaddr_in addr;
 	int		optval;
@@ -68,7 +68,7 @@ int Sockets::init(std::vector<Server*> parsed)
 	}
 }
 
-int Sockets::add_client(Client	&client)
+int Connections::add_client(Client	&client)
 {
 	ready_fd--;
 	if (servers.size() + clients.size() < FD_SETSIZE)
@@ -86,7 +86,7 @@ int Sockets::add_client(Client	&client)
 	return 0;
 }
 
-int Sockets::check_clients()
+int Connections::check_clients()
 {
 	char buf[100001];
 	int ret;
@@ -131,7 +131,7 @@ int Sockets::check_clients()
 	return 0;
 }
 
-void	Sockets::loop(void)
+void	Connections::loop(void)
 {
 	while (1)
 	{

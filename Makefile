@@ -2,7 +2,7 @@ NAME	=	webserv
 
 SRCS	=	main.cpp \
 			Server.cpp \
-			Sockets.cpp \
+			Connections.cpp \
 			Tools.cpp \
 			Client.cpp
 

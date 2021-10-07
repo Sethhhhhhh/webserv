@@ -5,7 +5,7 @@
 # include <string>
 # include "webserv.hpp"
 # include "Server.hpp"
-# include "Sockets.hpp"
+# include "Connections.hpp"
 
 class Client
 {
@@ -45,7 +45,7 @@ class Client
 			FINISHED
 		};
 
-	friend class Sockets;
+	friend class Connections;
 };
 
 #endif

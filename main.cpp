@@ -1,8 +1,8 @@
-#include "Sockets.hpp"
+#include "Connections.hpp"
 
 int	main()
 {
-	Sockets sockets;
+	Connections connections;
 	std::vector<Server*> servers;
 	Server test;
 
@@ -11,10 +11,10 @@ int	main()
 
 	// if (parse(servers, "pathtoconfig") == -1)
 	// 	return 1;
-	if (sockets.init(servers) == -1)
+	if (connections.init(servers) == -1)
 		return 1;
 	
 	std::cout << "Waiting for connection." << std::endl;
-	sockets.loop();
+	connections.loop();
 	return 0;
 }

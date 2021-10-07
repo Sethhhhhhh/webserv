@@ -8,7 +8,7 @@
 
 class Client;
 
-class Sockets
+class Connections
 {
 	private:
 		fd_set	active_set;
@@ -16,10 +16,10 @@ class Sockets
 		int		ready_fd;
 		int		max_fd;
 	public:
-		Sockets();
-		Sockets(const Sockets &c);
-		Sockets& operator=(const Sockets &c);
-		~Sockets();
+		Connections();
+		Connections(const Connections &c);
+		Connections& operator=(const Connections &c);
+		~Connections();
 
 		int init(std::vector<Server*> servers);
 		int add_client(Client& client);

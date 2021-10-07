@@ -24,7 +24,7 @@
 
 #ifndef __APPLE__
 
-#define	TIME	st_mtime
+#define	TIME	st_mtim
 
 #else
 
