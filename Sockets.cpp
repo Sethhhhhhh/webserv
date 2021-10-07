@@ -107,6 +107,7 @@ int Sockets::check_clients()
 			std::ifstream ifs;
 			std::string  resp;
 			std::string	 file;
+			std::stringstream len;
 
 			file = "pages/test.html";
 			resp = "HTTP/1.1 200 OK\n";
@@ -115,7 +116,8 @@ int Sockets::check_clients()
 			ss.str("");
 			ss << ifs.rdbuf();
 			std::cout << ss.str() << std::endl;
-			resp += ss.str();
+			len << ss.str().length();
+			resp += len.str();
 			resp += "\n";
 			resp += "Content-Type: ";
 			resp += MIME_types(file);
