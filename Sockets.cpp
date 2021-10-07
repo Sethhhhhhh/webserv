@@ -111,7 +111,7 @@ int Sockets::check_clients()
 			file = "pages/test.html";
 			resp = "HTTP/1.1 200 OK\n";
 			resp += "Content-Length: ";
-			ifs.open(file);
+			ifs.open(file.c_str());
 			ss.str("");
 			ss << ifs.rdbuf();
 			std::cout << ss.str() << std::endl;
@@ -122,7 +122,6 @@ int Sockets::check_clients()
 			resp += "\n\n";
 			resp += ss.str();
 			std::cout << resp << std::endl;
-			resp = ss.str();
 			send((*i)->_fd, resp.c_str(), resp.size(), 0);
 			close((*i)->_fd);
 		}
