@@ -19,6 +19,7 @@ class Client
 		std::string 						_uri;
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
+		std::string							_lan;
 		int									_ret_code;
 		t_chunk								_chunk;
 
@@ -34,6 +35,7 @@ class Client
 		void	check_parsing(void);
 		void	parse_body(void);
 		void	parse_chunked_body(void);
+		void	parse_language(void);
 
 		enum         status
 		{
