@@ -103,15 +103,28 @@ int Sockets::check_clients()
 			ss << buf;
 			(*i)->_buffer = ss.str();
 			(*i)->parse();
-			
+
 			std::ifstream ifs;
 			std::string  resp;
-			ifs.open("pages/test.html");
+			std::string	 file;
+
+			file = "pages/test.html";
+			resp = "HTTP/1.1 200 OK\n";
+			resp += "Content-Length: ";
+			ifs.open(file);
 			ss.str("");
 			ss << ifs.rdbuf();
+			std::cout << ss.str() << std::endl;
+			resp += std::to_string(ss.str().length());
+			resp += "\n";
+			resp += "Content-Type: ";
+			resp += MIME_types(file);
+			resp += "\n\n";
+			resp += ss.str();
+			std::cout << resp << std::endl;
 			resp = ss.str();
 			send((*i)->_fd, resp.c_str(), resp.size(), 0);
-			close((*i)->_fd); 
+			close((*i)->_fd);
 		}
 	}
 	return 0;
