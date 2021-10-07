@@ -115,7 +115,7 @@ int Sockets::check_clients()
 			ss.str("");
 			ss << ifs.rdbuf();
 			std::cout << ss.str() << std::endl;
-			resp += std::to_string(ss.str().length());
+			resp += ss.str();
 			resp += "\n";
 			resp += "Content-Type: ";
 			resp += MIME_types(file);

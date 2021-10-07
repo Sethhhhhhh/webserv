@@ -50,6 +50,6 @@ std::string	Last_modified(std::string &path)
 	struct stat	ret;
 
 	if (stat(path.c_str(), &ret) == 0)
-		return (ctime(&ret.st_mtimespec.tv_sec));
+		return (ctime(&ret.st_mtim.tv_sec));
 	return ("");
 }
