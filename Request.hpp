@@ -40,6 +40,14 @@ public:
 		FINISHED
 	};
 
+	enum         stage
+	{
+		START,
+		HEADERS,
+		BODY,
+		DONE
+	};
+	friend class Response;
 };
 
 #endif

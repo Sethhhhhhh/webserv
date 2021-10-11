@@ -5,14 +5,26 @@ Request::Request()  : _status(START)
 	_chunk.status = Request::UNCHUNKED;
 }
 
-Request::Request(const Request &c)
+Request::Request(const Request &req)
 {
-	(void)c;
+	*this = req;
 }
 
 Request& Request::operator=(const Request &c)
 {
-	(void)c;
+	if (this != &c)
+	{
+		_raw_request = c._raw_request;
+		_status = c._status;
+		_method = c._method;
+		_version = c._version;
+		_uri = c._uri;
+		_headers = c._headers;
+		_body = c._body;
+		_lan = c._lan;
+		_ret_code = c._ret_code;
+		_chunk = c._chunk;
+	}
 	return *this;
 }
 
@@ -32,7 +44,7 @@ void		Request::check_parsing(void)
 
 	else if (_method != "GET" && _method != "POST"
 			&& _method != "DELETE")
-		_ret_code = 405;
+		_ret_code = 501;
 
 	if (_uri.length() == 0 || _uri[0] != '/')
 		_ret_code = 400;
@@ -58,7 +70,7 @@ void	Request::parse_body()
 		}
 		else
 			_ret_code = 400;
-		_status = DONE;
+		_status = Request::DONE;
 	}
 	else if (_headers.find("Transfer-Encoding") != _headers.end())
 	{
@@ -88,7 +100,7 @@ void		Request::parse_chunked_body(void)
 					if (count == 0)
 					{
 						_chunk.status = Request::FINISHED;
-						_status = DONE;
+						_status = Request::DONE;
 					}
 					else
 					{
@@ -149,7 +161,7 @@ void		Request::parse(std::string str)
 	std::string		value;
 
 	_raw_request = str;
-	if (_status == START)
+	if (_status == Request::START)
 	{
 		line = cut_line(_raw_request, true, 0);
 		_method = line.substr(0, line.find(" "));
@@ -158,22 +170,22 @@ void		Request::parse(std::string str)
 		line.erase(0, _uri.length() + 1);
 		_version = line.substr(0, line.find(" "));
 		line = cut_line(_raw_request, true, 0);
-		_status = HEADERS;
+		_status = Request::HEADERS;
 	}
-	while (_status == HEADERS && line.find(":") != std::string::npos)
+	while (_status == Request::HEADERS && line.find(":") != std::string::npos)
 	{
 		key = line.substr(0, line.find(":"));
 		value = line.substr(line.find(":") + 2);
 		_headers[key] = value;
 		line = cut_line(_raw_request, true, 0);
 	}
-	_status = BODY;
+	_status = Request::BODY;
 	parse_language();
 	check_parsing();
-	if (_method == "POST" && _status == BODY)
+	if (_method == "POST" && _status == Request::BODY)
 		parse_body();
 	else
-		_status = DONE;
+		_status = Request::DONE;
 	print_request();
 }
 

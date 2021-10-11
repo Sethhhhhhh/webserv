@@ -33,11 +33,6 @@
 
 #endif
 
-# define	START 	0
-# define	HEADERS	1
-# define	BODY	2
-# define	DONE	3
-
 typedef struct  s_chunk
 {
     int         length;
