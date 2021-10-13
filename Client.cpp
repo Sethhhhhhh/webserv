@@ -4,7 +4,7 @@ Client::Client()
 {
 }
 
-Client::Client(int fd, Server *server) : _fd(fd), _server(server)
+Client::Client(int fd, Server *server) : _fd(fd), _server(server), _ready_request(false)
 {
 }
 
@@ -39,17 +39,22 @@ void	Client::wait_response(void)
 
 void 	Client::receive_request(void)
 {
-	char buffer[100001];
+	char buffer[1024];
 	int ret;
-	std::string request;
-	unsigned long bytes;
 
-	bytes = 0;
-	while ((ret = recv(_fd, buffer, 100000, 0)) == 100000)
+	ret = recv(_fd, buffer, 1023, 0);
+	buffer[ret] = 0;
+	_received_request += buffer;
+	_bytes_request += ret;
+	if (buffer[ret-1] == '\n')
 	{
-		buffer[ret] = 0;
-		request += buffer;
-		bytes += ret;
+		_ready_request = true;
+		// std::cout << "REQUEST: " << _received_request << std::endl;
+		_request.parse(_received_request);
 	}
-	_request.parse(request);
+}
+
+bool		Client::request_is_ready(void)
+{
+	return _ready_request;
 }

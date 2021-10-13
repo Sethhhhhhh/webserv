@@ -14,7 +14,7 @@ class Connections
 {
 	private:
 		fd_set	active_set;
-		fd_set	ready_set;
+		fd_set	ready_rset;
 		int		ready_fd;
 		int		max_fd;
 		

@@ -105,18 +105,21 @@ int Connections::check_clients()
 	client != clients.end() && ready_fd != 0 ; client++)
 	{
 		fd = (*client)->get_fd();
-		if (FD_ISSET(fd, &ready_set))
+		if (FD_ISSET(fd, &ready_rset))
 		{
 			ready_fd--;
 			(*client)->receive_request();
-			(*client)->wait_response();
+			if ((*client)->request_is_ready())
+			{	
+				(*client)->wait_response();
 
-			close(fd);
-			FD_CLR(fd, &active_set);
-			fd_list.remove(fd);
-			max_fd = *std::max_element(fd_list.begin(), fd_list.end());
-			free(*client);
-			client = clients.erase(client);
+				close(fd);
+				FD_CLR(fd, &active_set);
+				fd_list.remove(fd);
+				max_fd = *std::max_element(fd_list.begin(), fd_list.end());
+				free(*client);
+				client = clients.erase(client);
+			}
 		}
 	}
 	return 0;
@@ -124,14 +127,15 @@ int Connections::check_clients()
 
 void	Connections::loop(void)
 {
+	std::cout << "Waiting for connection." << std::endl;
 	while (1)
 	{
-		ready_set = active_set;
-		ready_fd = select(max_fd + 1, &ready_set, 0, 0, 0);
+		ready_rset = active_set;
+		ready_fd = select(max_fd + 1, &ready_rset, 0, 0, 0);
 		for (std::vector<Server*>::iterator server = servers.begin();
 			server != servers.end(); server++)
 		{
-			if (FD_ISSET((*server)->fd, &ready_set))
+			if (FD_ISSET((*server)->fd, &ready_rset))
 				add_client(**server);
 		}
 		check_clients();

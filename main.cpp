@@ -14,7 +14,6 @@ int	main()
 	if (connections.init(servers) == -1)
 		return 1;
 	
-	std::cout << "Waiting for connection." << std::endl;
 	connections.loop();
 	return 0;
 }

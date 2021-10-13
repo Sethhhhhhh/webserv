@@ -15,6 +15,9 @@ class Client
 		int 				_fd;
 		Server* 			_server;
 		Request				_request;
+		bool				_ready_request;
+		std::string			_received_request;
+		unsigned int		_bytes_request;
 
 	public:
 
@@ -27,7 +30,7 @@ class Client
 		void	receive_request(void);
 		void	wait_response(void);
 		int		get_fd(void) const;
-
+		bool	request_is_ready(void);
 
 };
 
