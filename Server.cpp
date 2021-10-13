@@ -43,5 +43,4 @@ void Server::respond(int fd, Request &request)
 	resp += ss.str();
 	std::cout << resp << std::endl;
 	send(fd, resp.c_str(), resp.size(), 0);
-
 }

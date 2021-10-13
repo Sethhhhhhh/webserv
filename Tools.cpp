@@ -89,4 +89,5 @@ std::string	status_code(int code)
 		return ("501 Not Implemented");
 		break;
 	}
+	return "";
 }

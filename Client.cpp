@@ -41,8 +41,15 @@ void 	Client::receive_request(void)
 {
 	char buffer[100001];
 	int ret;
+	std::string request;
+	unsigned long bytes;
 
-	ret = recv(_fd, buffer, 100000, 0);
-	buffer[ret] = 0;
-	_request.parse(buffer);
+	bytes = 0;
+	while ((ret = recv(_fd, buffer, 100000, 0)) == 100000)
+	{
+		buffer[ret] = 0;
+		request += buffer;
+		bytes += ret;
+	}
+	_request.parse(request);
 }
