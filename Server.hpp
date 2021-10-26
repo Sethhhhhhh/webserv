@@ -2,6 +2,7 @@
 # define SERVER_H
 
 # include "Connections.hpp"
+# include "Config.hpp"
 
 class Server
 {
@@ -18,7 +19,8 @@ public:
 	int fd;
 	int host;
 	int port;
-	
+
+	Config	config;	
 };
 
 #endif
