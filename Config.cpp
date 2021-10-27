@@ -1,12 +1,5 @@
 #include "Config.hpp"
 
-/* REMOVE THIS ! */
-
-static void	remove_extra_space(std::string & str) {
-	while (std::isspace(str[0]))
-		str.erase(str.begin());
-}
-
 /* CONSTRUCTOR AND DESTRUCTOR */
 
 Config::Config(void) {
@@ -45,7 +38,7 @@ char	Config::set_listen(std::string &content) {
 		return (1);
 	if (_port && !_host.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 
 	pos = content.find(":");
 	if (pos != std::string::npos) {
@@ -79,7 +72,7 @@ char	Config::set_error_pages(std::string &content) {
 	content.erase(0, 10);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 
 	pos = content.find_first_of(" ");
 	if (pos == std::string::npos)
@@ -91,7 +84,7 @@ char	Config::set_error_pages(std::string &content) {
 	error = std::atoi(error_expected.c_str());
 
 	content.erase(0, pos);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 	if (content.empty())
 		return (1);
 
@@ -113,7 +106,7 @@ char	Config::set_server_names(std::string &content) {
 	content.erase(0, 11);
 	if (!_names.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 	if (content.empty())
 		return (1);
 
@@ -121,7 +114,7 @@ char	Config::set_server_names(std::string &content) {
 	while (pos != std::string::npos) {
 		_names.push_back(content.substr(0, pos));
 		content.erase(0, pos);
-		remove_extra_space(content);
+		remove_extra_space(content, 0);
 		pos = content.find_first_of(" ");
 	}
 	_names.push_back(content.substr(0, content.length() - 1));
@@ -133,7 +126,7 @@ char	Config::set_client_max_body_size(std::string &content) {
 	content.erase(0, 20);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 
 	if (_client_max_body_size)
 		return (1);
@@ -154,7 +147,7 @@ char	Config::set_root(std::string &content) {
 	content.erase(0, 4);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 
 	if (!_root.empty())
 		return (1);
@@ -175,7 +168,7 @@ char	Config::set_location(std::ifstream & file, std::string &content, size_t &li
 	content.erase(0, 8);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 	if (content[0] != '/')
 		return (1);
 	pos = content.find_first_of(" ");
@@ -183,7 +176,7 @@ char	Config::set_location(std::ifstream & file, std::string &content, size_t &li
 		return (1);
 	location.path = content.substr(0, pos);
 	content.erase(0, pos);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 	if (content.empty() || content[0] != '{')
 		return (1);
 
@@ -191,13 +184,15 @@ char	Config::set_location(std::ifstream & file, std::string &content, size_t &li
 	location.autoindex = false;
 	
 	while (std::getline(file, content)) {
-		remove_extra_space(content);
+		remove_extra_space(content, 0);
 		if (content.empty()) {
 			line_count++;
 			continue;
 		}
 
 		if (content[content.length() - 1] != ';' && content[0] != '}')
+			return (1);
+		if (count_char_in_string(content, ';') > 1)
 			return (1);
 		if (!content.compare(0, 4, "root")) {
 			set_location_root(content, location.root);
@@ -243,7 +238,7 @@ char	Config::parse(std::ifstream & file, size_t & line_count) {
 
 	while (std::getline(file, content)) {
 		
-		remove_extra_space(content);
+		remove_extra_space(content, 0);
 		if (content.empty()) {
 			line_count++;
 			continue;
@@ -251,6 +246,8 @@ char	Config::parse(std::ifstream & file, size_t & line_count) {
 
 		if (content[content.length() - 1] != ';' && content[0] != '}'
 			&& content.compare(0, 8, "location"))
+			return (1);
+		if (count_char_in_string(content, ';') > 1)
 			return (1);
 		if (!content.compare(0, 6, "listen")) {
 			set_listen(content);

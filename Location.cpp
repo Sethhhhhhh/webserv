@@ -1,18 +1,10 @@
 #include "Config.hpp"
 
-
-/* REMOVE THIS ! */
-
-static void	remove_extra_space(std::string & str) {
-	while (std::isspace(str[0]))
-		str.erase(str.begin());
-}
-
 char	Config::set_location_root(std::string &content, std::string & root) {
 	content.erase(0, 4);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 
 	if (!root.empty())
 		return (1);
@@ -30,7 +22,7 @@ char	Config::set_location_client_max_body_size(std::string &content, size_t & cl
 	content.erase(0, 20);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 
 	if (client_max_body_size)
 		return (1);
@@ -55,7 +47,7 @@ char	Config::set_autoindex(std::string &content, bool & autoindex) {
 	content.erase(0, 9);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 
 	value = content.substr(0, content.length() - 1);
 	if (value == std::string("off"))
@@ -78,7 +70,7 @@ char	Config::set_cgi_extension(std::string &content, std::vector<std::string> &c
 	content.erase(0, 13);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 
 	pos = content.find_first_of(" ");
 	while (pos != std::string::npos) {
@@ -111,7 +103,7 @@ char	Config::set_method(std::string &content, std::vector<std::string> &method) 
 	content.erase(0, 9);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 	
 	pos = content.find_first_of(" ");
 	while (pos != std::string::npos) {
@@ -141,7 +133,7 @@ char	Config::set_index(std::string &content, std::vector<std::string> &index) {
 	content.erase(0, 5);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 
 	pos = content.find_first_of(" ");
 	while (pos != std::string::npos) {
@@ -170,7 +162,7 @@ char	Config::set_cgi_path(std::string &content, std::string &cgi_path) {
 	content.erase(0, 9);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 	
 	if (content[0] != '/' && content.find_first_of(" ") == std::string::npos)
 		return (1);
@@ -188,7 +180,7 @@ char	Config::set_auth_basic(std::string &content, std::string &auth_basic) {
 	content.erase(0, 10);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 
 	pos = content.find_first_of("\"");
 	while (pos != std::string::npos) {
@@ -207,7 +199,7 @@ char	Config::set_auth_basic_user_file(std::string &content, std::string &auth_ba
 	content.erase(0, 20);
 	if (content.empty())
 		return (1);
-	remove_extra_space(content);
+	remove_extra_space(content, 0);
 	
 	if (content[0] != '/' && content.find_first_of(" ") == std::string::npos)
 		return (1);

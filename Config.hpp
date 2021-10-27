@@ -1,6 +1,7 @@
 #ifndef __CONFIG_HPP__
 # define __CONFIG_HPP__
 
+#include "webserv.hpp"
 #include <string>
 #include <vector>
 #include <iostream>

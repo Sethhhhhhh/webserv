@@ -1,4 +1,5 @@
 #include "Connections.hpp"
+#include "Parsing.hpp"
 
 int	main(int ac, char **av)
 {
@@ -12,10 +13,10 @@ int	main(int ac, char **av)
 
 	// if (parse(servers, "pathtoconfig") == -1)
 	// 	return 1;
-	(void)ac;
-	(void)av;
-	//if (ac != 1 || parse(servers, av[1]) != -1)
-	//	return (1);
+
+	if (ac != 2 || parse(servers, av[1])) {
+		return (1);
+	}
 	if (connections.init(servers) == -1)
 		return 1;
 	

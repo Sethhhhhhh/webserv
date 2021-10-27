@@ -40,4 +40,7 @@ typedef struct  s_chunk
 
 }               t_chunk;
 
+size_t	count_char_in_string(std::string & s, char c);
+void	remove_extra_space(std::string & str, size_t pos);
+
 #endif
