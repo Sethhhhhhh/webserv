@@ -4,6 +4,19 @@ Server::Server()
 {
 }
 
+Server::Server(	std::string host, unsigned short port,
+			std::vector<std::string> names,
+			std::vector<t_location> locations, std::string root,
+			std::map<int, std::string> error_pages,
+			unsigned int client_max_body_size) :
+			_host(host), _port(port), _names(names), _locations(locations),
+			_root(root), _error_pages(error_pages), 
+			_client_max_body_size(client_max_body_size)
+{
+
+}
+
+
 Server::Server(const Server &c)
 {
 	(void)c;
