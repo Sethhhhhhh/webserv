@@ -8,7 +8,7 @@ char	Config::set_location_root(std::string &content, std::string & root) {
 
 	if (!root.empty())
 		return (1);
-	
+
 	if (content[0] != '/' || content[content.length() - 2] != '/')
 		return (1);
 	root = content.substr(0, content.length() - 1);

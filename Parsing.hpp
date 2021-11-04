@@ -2,6 +2,7 @@
 # define __PARSING_HPP__
 
 #include "Server.hpp"
+#include "Config.hpp"
 #include <fstream>
 #include <string>
 #include <vector>

@@ -45,7 +45,7 @@ int Connections::init(std::vector<Server*> parsed)
 			close((*server)->fd);
 			continue ;
 		}
-		addr.sin_port = htons((*server)->port);
+		addr.sin_port = htons((*server)->get_port());
 		if (bind((*server)->fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
 		{
 			close ((*server)->fd);

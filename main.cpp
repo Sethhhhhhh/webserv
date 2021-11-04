@@ -8,11 +8,8 @@ int	main(int ac, char **av)
 	Server test;
 
 
-	test.port = 1234;
+	test.set_port(1234);
 	servers.push_back(&test);
-
-	// if (parse(servers, "pathtoconfig") == -1)
-	// 	return 1;
 
 	if (ac != 2 || parse(servers, av[1])) {
 		return (1);

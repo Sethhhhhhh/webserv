@@ -17,10 +17,11 @@ void	remove_extra_space(std::string & str, size_t pos) {
 char	parse(std::vector<Server*> servers, char *path) {
 	std::ifstream	file(path);
 	std::string		content;
+	Config			config;
+
 	size_t			line_count;
 
 	if (!file.is_open()) {
-		
 		return (1);
 	}
 
@@ -44,7 +45,7 @@ char	parse(std::vector<Server*> servers, char *path) {
 		}
 		
 		Server	serv;
-		if (serv.config.parse(file, line_count)) {
+		if (config.parse(serv, file, line_count)) {
 			return (1);
 		}
 		servers.push_back(&serv);
