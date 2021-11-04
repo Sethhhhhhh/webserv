@@ -1,14 +1,14 @@
 NAME	=	webserv
 
-SRCS	=	main.cpp \
-			Server.cpp \
-			Connections.cpp \
-			Tools.cpp \
-			Request.cpp \
-			Client.cpp \
-			Parsing.cpp \
-			Location.cpp \
-			Config.cpp \
+SRCS	=	srcs/main.cpp \
+			srcs/tools.cpp \
+			srcs/parsing.cpp \
+			class/Server/Server.cpp \
+			class/Connections/Connections.cpp \
+			class/Request/Request.cpp \
+			class/Client/Client.cpp \
+			class/Config/Config.cpp \
+			class/Config/Location.cpp \
 
 OBJS	=	$(SRCS:.cpp=.o)
 
