@@ -248,8 +248,10 @@ char	Config::set_location(std::ifstream & file, std::string &content, size_t &li
 
 char	Config::parse(Server &server, std::ifstream &file, size_t &line_count) {
 	std::string	content;
-	this->server = &server;
+	char		bracket;
 
+	bracket = 0;
+	this->server = &server;
 	while (std::getline(file, content)) {
 		
 		remove_extra_space(content, 0);
@@ -284,12 +286,14 @@ char	Config::parse(Server &server, std::ifstream &file, size_t &line_count) {
 			}
 		}
 		else if (content[0] == '}') {
-			break;
+			bracket = 1;
 		}
 		else
 			return (1);
 		line_count++;
 	}
+	if (!bracket)
+		return (1);
 	server.print();
 
 	return (0);
