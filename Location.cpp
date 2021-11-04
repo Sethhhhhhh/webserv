@@ -1,6 +1,6 @@
 #include "Config.hpp"
 
-char	Config::set_location_root(std::string &content, std::string & root) {
+char	Config::set_location_root(std::string &content, std::string &root) {
 	content.erase(0, 4);
 	if (content.empty())
 		return (1);
@@ -14,7 +14,6 @@ char	Config::set_location_root(std::string &content, std::string & root) {
 	root = content.substr(0, content.length() - 1);
 	content.erase();
 
-	// std::cout << root << std::endl;
 	return (0);
 }
 
@@ -48,6 +47,7 @@ char	Config::set_autoindex(std::string &content, bool & autoindex) {
 	if (content.empty())
 		return (1);
 	remove_extra_space(content, 0);
+
 
 	value = content.substr(0, content.length() - 1);
 	if (value == std::string("off"))

@@ -46,9 +46,9 @@ void Server::respond(int fd, Request &request) {
 
 /* Get */
 Server::s_location							&Server::get_location() {return _location;}
+std::vector<Server::s_location>				&Server::get_locations() {return _locations;}
 std::vector<std::pair<int, std::string> >	Server::get_error_pages() const {return _error_pages;}
 std::vector<std::string>					Server::get_names() const {return _names;}
-std::vector<Server::s_location>				Server::get_locations() const {return _locations;}
 std::string									Server::get_host() const {return _host;}
 std::string									Server::get_root() const {return _root;}
 unsigned int								Server::get_port() const {return _port;}
@@ -82,7 +82,7 @@ char	Server::set_root(std::string root) {
 
 char	Server::set_port(unsigned int port) {
 	_port = port;
-	return (0);	
+	return (0);
 }
 
 char	Server::set_client_max_body_size(unsigned int client_max_body_size) {
@@ -91,7 +91,6 @@ char	Server::set_client_max_body_size(unsigned int client_max_body_size) {
 }
 
 /* Usuful func */
-
 void	Server::print(void) {
 	std::cout << "----------------------------------" << std::endl << "- SERVER INFORMATIONS -" << std::endl;
 
@@ -148,27 +147,24 @@ void	Server::print(void) {
 			std::cout << *m;
 			if (m != it->methods.end() - 1)
 				std::cout << ", ";
-			else
-				std::cout << std::endl;
 		}
+		std::cout << std::endl;
 
 		std::cout << "cgi_extension: ";
 		for (std::vector<std::string>::iterator m = it->cgi_extension.begin(); m < it->cgi_extension.end(); m++) {
 			std::cout << *m;
 			if (m != it->cgi_extension.end() - 1)
 				std::cout << ", ";
-			else
-				std::cout << std::endl;
 		}
+		std::cout << std::endl;
 
 		std::cout << "index: ";
 		for (std::vector<std::string>::iterator m = it->index.begin(); m < it->index.end(); m++) {
 			std::cout << *m;
 			if (m != it->index.end() - 1)
 				std::cout << ", ";
-			else
-				std::cout << std::endl;
 		}
+		std::cout << std::endl;
 	}
 
 

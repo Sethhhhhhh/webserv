@@ -37,7 +37,7 @@ class Server {
 		/* Get */
 		std::vector<std::pair<int, std::string> > 	get_error_pages() const;
 		std::vector<std::string>					get_names() const;
-		std::vector<Server::s_location>				get_locations() const;
+		std::vector<Server::s_location>				&get_locations();
 		std::string									get_host() const;
 		std::string									get_root() const;
 		unsigned int								get_port() const;
