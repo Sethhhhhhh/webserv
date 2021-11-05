@@ -1,7 +1,6 @@
 #include "Config.hpp"
 
-/* CONSTRUCTOR AND DESTRUCTOR */
-
+/* Constructor & Destructor */
 Config::Config(void) {
 	return ;
 }
@@ -27,7 +26,6 @@ char	Config::check_ip(void) const {
 }
 
 /* Set */
-
 char	Config::set_listen(std::string &content) {
 	size_t			pos;
 	unsigned int	expected_port;
@@ -89,7 +87,7 @@ char	Config::set_error_pages(std::string &content) {
 
 	if (content[0] != '/' || content.substr(content.length() - 6, 5) != std::string(".html"))
 		return (1);
-	server->set_error_pages(std::pair<int, std::string>(error, content.substr(0, content.length() - 1)));
+	server->set_error_pages(error, content.substr(0, content.length() - 1));
 
 	// for (std::vector<std::pair<int, std::string> >::iterator it = server->_error_pages.begin(); it < server->_error_pages.end(); it++) {
 	// 	std::cout << it->first << std::endl;

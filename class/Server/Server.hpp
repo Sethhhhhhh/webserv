@@ -36,7 +36,7 @@ class Server {
 		void	respond(int fd, Request &request);
 
 		/* Get */
-		std::vector<std::pair<int, std::string> > 	get_error_pages() const;
+		std::map<int, std::string>					get_error_pages() const;
 		std::vector<std::string>					get_names() const;
 		std::vector<Server::s_location>				&get_locations();
 		std::string									get_host() const;
@@ -46,7 +46,7 @@ class Server {
 		Server::s_location							&get_location();
 
 		/* Set */
-		char	set_error_pages(std::pair<int, std::string>);
+		char	set_error_pages(int, std::string);
 		char	set_names(std::string);
 		char	set_locations(Server::s_location &);
 		char	set_host(std::string);
@@ -62,7 +62,7 @@ class Server {
 
 	private:
 		/* Server config */
-		std::vector<std::pair<int, std::string> >	_error_pages;
+		std::map<int, std::string>					_error_pages;
 		std::vector<std::string>					_names;
 		std::vector<Server::s_location>				_locations;
 		std::string									_host;
@@ -72,6 +72,6 @@ class Server {
 		Server::s_location							_location;
 };
 
-char	        parse(std::vector<Server*>, char *path);
+char	        parse(std::vector<Server*> &server, char *path);
 
 #endif

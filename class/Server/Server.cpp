@@ -47,7 +47,7 @@ void Server::respond(int fd, Request &request) {
 /* Get */
 Server::s_location							&Server::get_location() {return _location;}
 std::vector<Server::s_location>				&Server::get_locations() {return _locations;}
-std::vector<std::pair<int, std::string> >	Server::get_error_pages() const {return _error_pages;}
+std::map<int, std::string>					Server::get_error_pages() const {return _error_pages;}
 std::vector<std::string>					Server::get_names() const {return _names;}
 std::string									Server::get_host() const {return _host;}
 std::string									Server::get_root() const {return _root;}
@@ -55,8 +55,8 @@ unsigned int								Server::get_port() const {return _port;}
 unsigned int								Server::get_client_max_body_size() const {return _client_max_body_size;}
 
 /* Set */
-char	Server::set_error_pages(std::pair<int, std::string> error_page) {
-	_error_pages.push_back(error_page);
+char	Server::set_error_pages(int id, std::string path) {
+	_error_pages[id] = path;
 	return (0);	
 }
 
@@ -97,7 +97,7 @@ void	Server::print(void) {
 
 	/* NAMES */
 	std::cout << "server_names: ";
-	for (std::vector<std::string>::iterator it = _names.begin(); it < _names.end(); it++) {
+	for (std::vector<std::string>::iterator it = _names.begin(); it !=_names.end(); it++) {
 		std::cout << *it;
 		if (it != _names.end() - 1)
 			std::cout << ", ";
@@ -107,13 +107,10 @@ void	Server::print(void) {
 
 	/* ERROR PAGES */
 	std::cout << "error_pages: ";
-	for (std::vector<std::pair<int, std::string> >::iterator it = _error_pages.begin(); it < _error_pages.end(); it++) {
-		std::cout << "[" << it->first << "]" << it->second;
-		if (it != _error_pages.end() - 1)
-			std::cout << ", ";
-		else
-			std::cout << std::endl;
+	for (std::map<int, std::string>::iterator it = _error_pages.begin(); it != _error_pages.end(); it++) {
+		std::cout << "[" << it->first << "]" << it->second << ", ";
 	}
+	std::cout << std::endl;
 
 	/* HOST */
 	std::cout << "host: " << _host << std::endl;
@@ -130,7 +127,7 @@ void	Server::print(void) {
 	/* LOCATION(S) */
 	std::cout << std::endl << "- LOCATIONS -" << std::endl;
 
-	for (std::vector<struct s_location>::iterator it = _locations.begin(); it < _locations.end(); it++) {
+	for (std::vector<struct s_location>::iterator it = _locations.begin(); it != _locations.end(); it++) {
 		std::cout << std::endl;
 		std::cout << "path: " << it->path << std::endl;
 		std::cout << "root: " << (it->root.empty() ? "null" : it->root) << std::endl;
@@ -143,7 +140,7 @@ void	Server::print(void) {
 		std::cout << std::boolalpha << "autoindex: " << it->autoindex << std::endl;
 
 		std::cout << "methods: ";
-		for (std::vector<std::string>::iterator m = it->methods.begin(); m < it->methods.end(); m++) {
+		for (std::vector<std::string>::iterator m = it->methods.begin(); m != it->methods.end(); m++) {
 			std::cout << *m;
 			if (m != it->methods.end() - 1)
 				std::cout << ", ";
@@ -151,7 +148,7 @@ void	Server::print(void) {
 		std::cout << std::endl;
 
 		std::cout << "cgi_extension: ";
-		for (std::vector<std::string>::iterator m = it->cgi_extension.begin(); m < it->cgi_extension.end(); m++) {
+		for (std::vector<std::string>::iterator m = it->cgi_extension.begin(); m != it->cgi_extension.end(); m++) {
 			std::cout << *m;
 			if (m != it->cgi_extension.end() - 1)
 				std::cout << ", ";
@@ -159,7 +156,7 @@ void	Server::print(void) {
 		std::cout << std::endl;
 
 		std::cout << "index: ";
-		for (std::vector<std::string>::iterator m = it->index.begin(); m < it->index.end(); m++) {
+		for (std::vector<std::string>::iterator m = it->index.begin(); m != it->index.end(); m++) {
 			std::cout << *m;
 			if (m != it->index.end() - 1)
 				std::cout << ", ";
