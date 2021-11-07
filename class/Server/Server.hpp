@@ -42,6 +42,7 @@ class Server {
 		std::string									get_host() const;
 		std::string									get_root() const;
 		unsigned int								get_port() const;
+		int											get_fd() const;
 		unsigned int								get_client_max_body_size() const;
 		Server::s_location							&get_location();
 
@@ -53,12 +54,12 @@ class Server {
 		char	set_root(std::string);
 		char	set_port(unsigned int);
 		char	set_client_max_body_size(unsigned int);
+		char	set_fd(int);
 
 		/* Usuful func */
 		void	print(void);
 
 		/* I don't know */
-		int fd;
 
 	private:
 		/* Server config */
@@ -70,6 +71,7 @@ class Server {
 		unsigned int								_port;
 		unsigned int								_client_max_body_size;
 		Server::s_location							_location;
+		int											_fd;
 };
 
 char	        parse(std::vector<Server*> &server, char *path);

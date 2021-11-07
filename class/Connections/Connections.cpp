@@ -23,7 +23,7 @@ Connections::~Connections()
 {
 }
 
-int Connections::init(std::vector<Server*> parsed)
+int Connections::init()
 {
 	struct sockaddr_in addr;
 	int		optval;
@@ -32,34 +32,38 @@ int Connections::init(std::vector<Server*> parsed)
 	optval = 1;
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = INADDR_ANY;
-	for (std::vector<Server*>::iterator server = parsed.begin(); 
-		server != parsed.end(); server++)
+	for ( std::vector<Server*>::iterator server = servers.begin();
+			server != servers.end(); server++)
 	{
-		(*server)->fd = socket(AF_INET, SOCK_STREAM, 0);
-		if ((*server)->fd == -1)
+		int		fd;
+
+		fd = socket(AF_INET, SOCK_STREAM, 0);
+		if (fd == -1)
 			 continue ;
-		if (setsockopt((*server)->fd, SOL_SOCKET, SO_REUSEADDR, &optval,
+		if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval,
 			sizeof(optval)) == -1)
 		{
-			close((*server)->fd);
+			close(fd);
 			continue ;
 		}
+		addr.sin_addr.s_addr = inet_addr((*server)->get_host().c_str());
 		addr.sin_port = htons((*server)->get_port());
-		if (bind((*server)->fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
+		if (bind(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
 		{
-			close ((*server)->fd);
+			servers.erase(server);
+			close (fd);
 			continue ;
 		}
-		if (listen((*server)->fd, SOMAXCONN) < 0)
+		if (listen(fd, SOMAXCONN) < 0)
 		{
-			close ((*server)->fd);
+			servers.erase(server);
+			close (fd);
 			continue ;
 		}
-		servers.push_back(*server);
-		FD_SET((*server)->fd, &active_set);
-		fd_list.push_back((*server)->fd);
-		max_fd = (*server)->fd;
+		(*server)->set_fd(fd);
+		FD_SET(fd, &active_set);
+		fd_list.push_back(fd);
+		max_fd = fd;
 	}
 	if (servers.size() == 0)
 		return -1;
@@ -79,7 +83,7 @@ int Connections::add_client(Server &server)
 	
 	if (servers.size() + clients.size() < FD_SETSIZE)
 	{
-		fd = accept(server.fd, 0, 0);
+		fd = accept(server.get_fd(), 0, 0);
 		if (fd == -1)
 			return -1;
 		std::cout << "Connection accepted." << std::endl;
@@ -135,7 +139,7 @@ void	Connections::loop(void)
 		for (std::vector<Server*>::iterator server = servers.begin();
 			server != servers.end(); server++)
 		{
-			if (FD_ISSET((*server)->fd, &ready_rset))
+			if (FD_ISSET((*server)->get_fd(), &ready_rset))
 				add_client(**server);
 		}
 		check_clients();

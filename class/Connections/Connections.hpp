@@ -24,7 +24,7 @@ class Connections
 		Connections& operator=(const Connections &c);
 		~Connections();
 
-		int init(std::vector<Server*> servers);
+		int init();
 		int add_client(Server &server);
 		int check_clients();
 		void	loop();

@@ -44,11 +44,11 @@ char	parse(std::vector<Server*> &servers, char *path) {
 			return (1);
 		}
 		
-		Server	serv;
-		if (config.parse(serv, file, line_count)) {
+		Server	*serv = new Server;
+		if (config.parse(*serv, file, line_count)) {
 			return (1);
 		}
-		servers.push_back(&serv);
+		servers.push_back(serv);
 	}
 	return (0);
 }

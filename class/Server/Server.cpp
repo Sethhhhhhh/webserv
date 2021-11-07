@@ -52,6 +52,7 @@ std::vector<std::string>					Server::get_names() const {return _names;}
 std::string									Server::get_host() const {return _host;}
 std::string									Server::get_root() const {return _root;}
 unsigned int								Server::get_port() const {return _port;}
+int											Server::get_fd() const {return _fd;}
 unsigned int								Server::get_client_max_body_size() const {return _client_max_body_size;}
 
 /* Set */
@@ -82,6 +83,11 @@ char	Server::set_root(std::string root) {
 
 char	Server::set_port(unsigned int port) {
 	_port = port;
+	return (0);
+}
+
+char	Server::set_fd(int fd) {
+	_fd = fd;
 	return (0);
 }
 
