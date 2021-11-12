@@ -48,7 +48,19 @@ char	parse(std::vector<Server*> &servers, char *path) {
 		if (config.parse(*serv, file, line_count)) {
 			return (1);
 		}
+		for (std::vector<Server *>::iterator it = servers.begin(); it != servers.end(); it++) {
+			for (std::vector<std::string>::iterator old_name = (*it)->get_names().begin(); old_name != (*it)->get_names().end(); old_name++) {
+				for (std::vector<std::string>::iterator name = serv->get_names().begin(); name != serv->get_names().end(); name++) {
+					std::cout << *name << std::endl;
+					std::cout << *old_name << std::endl;
+					if (*name == *old_name)
+						return (1);
+					
+				}
+			}
+		}
 		servers.push_back(serv);
 	}
+
 	return (0);
 }
