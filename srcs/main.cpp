@@ -8,6 +8,7 @@ int	main(int ac, char **av)
 	if (ac != 2 || parse(connections.servers, av[1])) {
 		return (1);
 	}
+
 	if (connections.init() == -1)
 		return 1;
 	

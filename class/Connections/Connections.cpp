@@ -60,6 +60,7 @@ int Connections::init()
 			close (fd);
 			continue ;
 		}
+		
 		(*server)->set_fd(fd);
 		FD_SET(fd, &active_set);
 		fd_list.push_back(fd);

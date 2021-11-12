@@ -149,7 +149,7 @@ char	Config::set_root(std::string &content) {
 	if (!server->get_root().empty())
 		return (1);
 	
-	if (content[0] != '/' || content[content.length() - 2] != '/')
+	if (content[0] != '/')
 		return (1);
 	server->set_root(content.substr(0, content.length() - 1));
 	content.erase();
@@ -185,21 +185,23 @@ char	Config::set_location(std::ifstream & file, std::string &content, size_t &li
 
 	server->get_location().client_max_body_size = 0;
 	server->get_location().autoindex = false;
-	
 	while (std::getline(file, content)) {
 		remove_extra_space(content, 0);
 		if (content.empty() || content[0] == '#') {
+			std::cout << line_count << std::endl;
 			line_count++;
 			continue;
 		}
 
-		if (content[content.length() - 1] != ';' && content[0] != '}')
+		if (content[content.length() - 1] != ';' && content[0] != '}') {
 			return (1);
+		}
 		if (count_char_in_string(content, ';') > 1)
 			return (1);
 		if (!content.compare(0, 4, "root")) {
-			if (set_location_root(content, server->get_location().root))
+			if (set_location_root(content, server->get_location().root)) {
 				return (1);
+			}
 		}
 		else if (!content.compare(0, 6, "method")) {
 			if (set_method(content, server->get_location().methods))
@@ -254,15 +256,15 @@ char	Config::parse(Server &server, std::ifstream &file, size_t &line_count) {
 		
 		remove_extra_space(content, 0);
 		if (content.empty() || content[0] == '#') {
-			std::cout << line_count << std::endl;
 			line_count++;
 			continue;
 		}
-		if (content[content.length() - 1] != ';' && content[0] != '}'
-			&& content.compare(0, 8, "location"))
+		if (content[content.length() - 1] != ';' && content[0] != '}' && content.compare(0, 8, "location")) {
 			return (1);
-		if (count_char_in_string(content, ';') > 1)
+		}
+		if (count_char_in_string(content, ';') > 1) {
 			return (1);
+		}
 		if (!content.compare(0, 6, "listen")) {
 			set_listen(content);
 		}
@@ -285,9 +287,11 @@ char	Config::parse(Server &server, std::ifstream &file, size_t &line_count) {
 		}
 		else if (content[0] == '}') {
 			bracket = 1;
+			break;
 		}
-		else
+		else {
 			return (1);
+		}
 		line_count++;
 	}
 	if (!bracket)
