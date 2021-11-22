@@ -47,8 +47,8 @@ void Server::respond(int fd, Request &request) {
 /* Get */
 Server::s_location							&Server::get_location() {return _location;}
 std::vector<Server::s_location>				&Server::get_locations() {return _locations;}
+std::vector<std::string>					&Server::get_names() {return _names;}
 std::map<int, std::string>					Server::get_error_pages() const {return _error_pages;}
-std::vector<std::string>					Server::get_names() const {return _names;}
 std::string									Server::get_host() const {return _host;}
 std::string									Server::get_root() const {return _root;}
 unsigned int								Server::get_port() const {return _port;}

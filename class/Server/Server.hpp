@@ -37,7 +37,7 @@ class Server {
 
 		/* Get */
 		std::map<int, std::string>					get_error_pages() const;
-		std::vector<std::string>					get_names() const;
+		std::vector<std::string>					&get_names();
 		std::vector<Server::s_location>				&get_locations();
 		std::string									get_host() const;
 		std::string									get_root() const;
