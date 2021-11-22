@@ -24,7 +24,8 @@ class Request {
 		Request& operator=(const Request &c);
 		~Request();
 
-		void	parse(std::string str);
+		void	parse(std::string str, std::vector<s_location> &locs);
+		void	parse_config(std::vector<s_location> &locs);
 		void	print_request(void);
 		void	check_parsing(void);
 		void	parse_body(void);

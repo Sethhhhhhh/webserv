@@ -154,7 +154,27 @@ void		Request::parse_language(void)
 	}
 }
 
-void		Request::parse(std::string str)
+void		Request::parse_config(std::vector<s_location> &locs)
+{
+	std::string		match = "";
+
+	for (unsigned long i = 0; i < locs.size(); i++)
+	{
+		if (locs[i].path == _uri)
+		{
+			match = locs[i].path;
+			break ;
+		}
+		if (_uri.find(locs[i].path) != std::string::npos && _uri.find(locs[i].path) == 0)
+		{
+			if (locs[i].path.length() > match.length())
+				match = locs[i].path;
+		}
+	}
+	std::cout << "match == " << match << std::endl;
+}
+
+void		Request::parse(std::string str, std::vector<s_location>	&locs)
 {
 	std::string		line;
 	std::string		key;
@@ -171,6 +191,7 @@ void		Request::parse(std::string str)
 		_version = line.substr(0, line.find(" "));
 		line = cut_line(_raw_request, true, 0);
 		_status = Request::HEADERS;
+		parse_config(locs);
 	}
 	while (_status == Request::HEADERS && line.find(":") != std::string::npos)
 	{
