@@ -17,7 +17,7 @@ Config &	Config::operator=(Config & src) {
 
 Config::~Config(void) {
 	return ;
-}
+}	
 
 
 char	Config::check_ip(void) const {
@@ -158,7 +158,7 @@ char	Config::set_root(std::string &content) {
 
 /* PARSE LOCATION */
 
-char	Config::set_location(std::ifstream & file, std::string &content, size_t &line_count) {
+char	Config::set_location(std::ifstream & file, std::string &content, int &line_count) {
 	s_location		location;
 	std::string		path;
 	size_t			pos;
@@ -193,12 +193,13 @@ char	Config::set_location(std::ifstream & file, std::string &content, size_t &li
 			line_count++;
 			continue;
 		}
+		line_count++;
 
 		if (content[content.length() - 1] != ';' && content[0] != '}') {
-			return (1);
+			throw Error("semicolon required at the end of the line.", line_count);
 		}
 		if (count_char_in_string(content, ';') > 1)
-			return (1);
+			throw Error("There is more than one semicolon at the end of the line.", line_count);
 		if (!content.compare(0, 4, "root")) {
 			if (set_location_root(content, location.root)) {
 				return (1);
@@ -241,14 +242,13 @@ char	Config::set_location(std::ifstream & file, std::string &content, size_t &li
 
 			return (0);
 		}
-		line_count++;
 	}
 	return (0);
 }
 
 /* PARSE */
 
-char	Config::parse(Server &server, std::ifstream &file, size_t &line_count) {
+char	Config::parse(Server &server, std::ifstream &file, int &line_count) {
 	std::string	content;
 	char		bracket;
 
@@ -261,11 +261,13 @@ char	Config::parse(Server &server, std::ifstream &file, size_t &line_count) {
 			line_count++;
 			continue;
 		}
+
+		line_count++;
 		if (content[content.length() - 1] != ';' && content[0] != '}' && content.compare(0, 8, "location")) {
-			return (1);
+			throw Error("semicolon required at the end of the line.", line_count);
 		}
 		if (count_char_in_string(content, ';') > 1) {
-			return (1);
+			throw Error("There is more than one semicolon at the end of the line.", line_count);
 		}
 		if (!content.compare(0, 6, "listen")) {
 			set_listen(content);
@@ -294,11 +296,8 @@ char	Config::parse(Server &server, std::ifstream &file, size_t &line_count) {
 		else {
 			return (1);
 		}
-		line_count++;
 	}
 	if (!bracket)
 		return (1);
-	server.print();
-
 	return (0);
 }

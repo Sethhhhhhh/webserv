@@ -63,4 +63,6 @@ std::string		cut_line(std::string &str, bool cond, int back);
 std::string		MIME_types(std::string	&str);
 std::string		Last_modified(std::string &path);
 
+std::string     to_string(int n);
+
 #endif

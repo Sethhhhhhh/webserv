@@ -1,5 +1,14 @@
 #include "../includes/webserv.hpp"
 
+std::string	to_string(int n) {
+	std::string 		str;
+	std::stringstream ss; 
+
+	ss << n;  
+	ss >> str;  
+	return (str);
+}
+
 std::string	cut_line(std::string &str, bool cond, int back)
 {
 	std::string ret;

@@ -20,7 +20,7 @@ char	parse(std::vector<Server*> &servers, char *path) {
 	std::string		content;
 	Config			config;
 
-	size_t			line_count;
+	int			line_count;
 
 	if (!file.is_open()) {
 		return (1);
@@ -36,6 +36,7 @@ char	parse(std::vector<Server*> &servers, char *path) {
 			continue;
 		}
 		
+		line_count++;
 		if (!content.compare(0, 5, "server")) {
 			return (1);
 		}
@@ -46,7 +47,11 @@ char	parse(std::vector<Server*> &servers, char *path) {
 		}
 		
 		Server	*serv = new Server;
-		if (config.parse(*serv, file, line_count)) {
+		try {
+			config.parse(*serv, file, line_count);
+		}
+		catch(std::exception &e) {
+			std::cout << e.what() << std::endl;
 			return (1);
 		}
 		for (std::vector<Server *>::iterator it = servers.begin(); it != servers.end(); it++) {
@@ -55,8 +60,8 @@ char	parse(std::vector<Server*> &servers, char *path) {
 			}
 			for (std::vector<std::string>::iterator name = serv->get_names().begin(); name != serv->get_names().end(); name++) {
 				for (std::vector<std::string>::iterator old_name = (*it)->get_names().begin(); old_name != (*it)->get_names().end(); old_name++) {
-					std::cout << *old_name << std::endl;
-					std::cout << *name << std::endl;
+					// std::cout << *old_name << std::endl;
+					// std::cout << *name << std::endl;
 				}
 			}
 		}

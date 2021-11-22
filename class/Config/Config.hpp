@@ -20,7 +20,22 @@ class Config {
 		Config &	operator=(Config &);
 
 		/* Main func */
-		char		parse(Server &server, std::ifstream & file, size_t & line_count);
+		char		parse(Server &server, std::ifstream & file, int &line_count);
+
+		class Error : public std::exception {
+			private:
+				std::string	_msg;
+
+			public:
+				Error(std::string error_msg, int line) {
+					_msg = "Line " + to_string(line) + ": " + error_msg;
+				};
+				~Error() throw() {};
+
+ 				virtual const char *what() const throw() {
+					return (_msg.c_str());
+        		};
+        };
 
 	private:
 		Server	*server;
@@ -31,7 +46,7 @@ class Config {
 		char	set_server_names(std::string &content);
 		char	set_client_max_body_size(std::string &content);
 		char	set_root(std::string &content);
-		char	set_location(std::ifstream & file, std::string &content, size_t & line_count);
+		char	set_location(std::ifstream & file, std::string &content, int & line_count);
 
 		/* Set (location config) */
 		char	set_location_root(std::string &content, std::string & root);

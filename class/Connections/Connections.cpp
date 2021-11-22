@@ -28,18 +28,18 @@ int Connections::init()
 	struct sockaddr_in addr;
 	int		optval;
 
+	memset(&addr, 0, sizeof(addr));
 	FD_ZERO(&active_set);
 	optval = 1;
-	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
-	for ( std::vector<Server*>::iterator server = servers.begin();
-			server != servers.end(); server++)
+	for (std::vector<Server*>::iterator server = servers.begin();
+			server != servers.end() && servers.size() > 0; server++)
 	{
 		int		fd;
 
 		fd = socket(AF_INET, SOCK_STREAM, 0);
 		if (fd == -1)
-			 continue ;
+			continue ;
 		if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval,
 			sizeof(optval)) == -1)
 		{
@@ -81,7 +81,6 @@ int Connections::add_client(Server &server)
 	int		fd;
 
 	ready_fd--;
-	
 	if (servers.size() + clients.size() < FD_SETSIZE)
 	{
 		fd = accept(server.get_fd(), 0, 0);
