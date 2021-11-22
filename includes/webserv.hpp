@@ -30,6 +30,25 @@
 
 #endif
 
+/* Location struct */
+struct	s_location {
+    std::vector<std::string>	methods;
+    std::vector<std::string>	cgi_extension;
+    std::vector<std::string>	index;
+
+    std::string					path;
+    std::string					root;
+    std::string					cgi_path;
+    std::string					upload_path;
+    std::string					auth_basic_user_file;
+    std::string					auth_basic;
+
+    bool						upload_eanable;
+    bool						autoindex;
+
+    size_t						client_max_body_size;
+};
+
 typedef struct  s_chunk
 {
     int         length;

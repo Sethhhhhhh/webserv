@@ -45,8 +45,7 @@ void Server::respond(int fd, Request &request) {
 }
 
 /* Get */
-Server::s_location							&Server::get_location() {return _location;}
-std::vector<Server::s_location>				&Server::get_locations() {return _locations;}
+std::vector<s_location>						&Server::get_locations() {return _locations;}
 std::vector<std::string>					&Server::get_names() {return _names;}
 std::map<int, std::string>					Server::get_error_pages() const {return _error_pages;}
 std::string									Server::get_host() const {return _host;}
@@ -66,7 +65,7 @@ char	Server::set_names(std::string name) {
 	return (0);	
 }
 
-char	Server::set_locations(Server::s_location &location) {
+char	Server::set_locations(s_location &location) {
 	_locations.push_back(location);
 	return (0);	
 }

@@ -6,6 +6,7 @@ char	Config::set_location_root(std::string &content, std::string &root) {
 		return (1);
 	remove_extra_space(content, 0);
 
+	std::cout << root << std::endl;
 	if (!root.empty())
 		return (1);
 

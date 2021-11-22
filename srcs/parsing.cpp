@@ -14,6 +14,8 @@ void	remove_extra_space(std::string & str, size_t pos) {
 		str.erase(str.begin() + pos);
 }
 
+
+
 char	parse(std::vector<Server*> &servers, char *path) {
 	std::ifstream	file(path);
 	std::string		content;
