@@ -1,33 +1,32 @@
 #include "Config.hpp"
 
-char	Config::set_location_root(std::string &content, std::string &root) {
+char	Config::set_location_root(std::string &content, std::string &root, int line_count) {
 	content.erase(0, 4);
-	if (content.empty())
-		return (1);
 	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
+		throw Error("You must specified a path for the root.", line_count);
 
-	std::cout << root << std::endl;
 	if (!root.empty())
-		return (1);
+		throw Error("Root already specified.", line_count);
 
 	if (content[0] != '/')
-		return (1);
+		throw Error("Only absolute path accepted.", line_count);
 	root = content.substr(0, content.length() - 1);
 	content.erase();
 
 	return (0);
 }
 
-char	Config::set_location_client_max_body_size(std::string &content, size_t & client_max_body_size) {
+char	Config::set_location_client_max_body_size(std::string &content, size_t & client_max_body_size, int line_count) {
 	content.erase(0, 20);
-	if (content.empty())
-		return (1);
 	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
+		throw Error("You must specify a client max body size.", line_count);
 
 	if (client_max_body_size)
-		return (1);
+		throw Error("Client max body size already specified.", line_count);
 	if (content.find_first_not_of("0123456789MmGgKk;") != std::string::npos)
-		return (1);
+		throw Error("Bad format.", line_count);
 	client_max_body_size = static_cast<size_t>(std::atol(content.c_str()));
 	if (content[content.length() - 2] == 'G' || content[content.length() - 2] == 'g')
 		client_max_body_size *= 1000000000;
@@ -41,14 +40,13 @@ char	Config::set_location_client_max_body_size(std::string &content, size_t & cl
 	return (0);
 }
 
-char	Config::set_autoindex(std::string &content, bool & autoindex) {
+char	Config::set_autoindex(std::string &content, bool & autoindex, int line_count) {
 	std::string	value;
 
 	content.erase(0, 9);
-	if (content.empty())
-		return (1);
 	remove_extra_space(content, 0);
-
+	if (content.substr(0, content.size() - 1).empty())
+		throw Error("No content.", line_count);
 
 	value = content.substr(0, content.length() - 1);
 	if (value == std::string("off"))
@@ -56,22 +54,20 @@ char	Config::set_autoindex(std::string &content, bool & autoindex) {
 	else if (value == std::string("on"))
 		autoindex = true;
 	else
-		return (1);
+		throw Error("Bad format.", line_count);
 	content.erase();
 
-	// std::cout << std::boolalpha << autoindex << std::endl;
 	return (0);
 }
 
-char	Config::set_cgi_extension(std::string &content, std::vector<std::string> &cgi_extension) {
+char	Config::set_cgi_extension(std::string &content, std::vector<std::string> &cgi_extension, int line_count) {
 	std::string	extension_expected;
 	size_t	pos;
 
-
 	content.erase(0, 13);
-	if (content.empty())
-		return (1);
 	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
+		throw Error("You must specify a cgi extension.", line_count);
 
 	pos = content.find_first_of(" ");
 	while (pos != std::string::npos) {
@@ -83,28 +79,23 @@ char	Config::set_cgi_extension(std::string &content, std::vector<std::string> &c
 
 		pos = content.find_first_of(" ");
 	}
-	if (content[0] != '.') {
-		std::cout << "lol" << std::endl;
-		return (1);
-	}
+	if (content[0] != '.')
+		throw Error("No dot in your extension.", line_count);
 
 	cgi_extension.push_back(content.substr(0, content.length() - 1));
 	content.erase();
 
-	// for (std::vector<std::string>::iterator it = cgi_extension.begin(); it < cgi_extension.end(); it++) {
-	// 	std::cout << *it << std::endl;
-	// }
 	return (0);
 }
 
-char	Config::set_method(std::string &content, std::vector<std::string> &method) {
+char	Config::set_method(std::string &content, std::vector<std::string> &method, int line_count) {
 	std::string	method_expected;
 	size_t		pos;
 	
 	content.erase(0, 9);
-	if (content.empty())
-		return (1);
 	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
+		throw Error("You must specify one or more methods between GET POST and DELETE.", line_count);
 	
 	pos = content.find_first_of(" ");
 	while (pos != std::string::npos) {
@@ -117,24 +108,21 @@ char	Config::set_method(std::string &content, std::vector<std::string> &method) 
 	}
 	method_expected = content.substr(0, content.length() - 1);
 	if (method_expected != "GET" && method_expected != "POST" && method_expected != "DELETE")
-		return (1);
+		throw Error("Unknown method.", line_count);
 	method.push_back(method_expected);
 	content.erase();
 
-	// for (std::vector<std::string>::iterator it = method.begin(); it < method.end(); it++) {
-	// 	std::cout << *it << std::endl;
-	// }
 	return (0);
 }
 
-char	Config::set_index(std::string &content, std::vector<std::string> &index) {
+char	Config::set_index(std::string &content, std::vector<std::string> &index, int line_count) {
 	std::string	file;
 	size_t		pos;
 	
 	content.erase(0, 5);
-	if (content.empty())
-		return (1);
 	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
+		throw Error("You must specify an index.", line_count);
 
 	pos = content.find_first_of(" ");
 	while (pos != std::string::npos) {
@@ -149,65 +137,58 @@ char	Config::set_index(std::string &content, std::vector<std::string> &index) {
 
 	pos = content.find_last_of(".");
 	if (content.substr(pos, 5) != ".html" && content.substr(pos, 4) != ".php")
-		return (1);
+		throw Error("Only .html or .php extension accepted.", line_count);
 	index.push_back(content.substr(0, content.length() - 1));
 	content.erase();
 
-	// for (std::vector<std::string>::iterator it = index.begin(); it < index.end(); it++) {
-	// 	std::cout << *it << std::endl;
-	// }
 	return (0);
 }
 
-char	Config::set_cgi_path(std::string &content, std::string &cgi_path) {
+char	Config::set_cgi_path(std::string &content, std::string &cgi_path, int line_count) {
 	content.erase(0, 9);
-	if (content.empty())
-		return (1);
 	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
+		throw Error("You must specify a cgi path.", line_count);
 	
 	if (content[0] != '/' && content.find_first_of(" ") == std::string::npos)
-		return (1);
+		throw Error("The path must be absolute.", line_count);
 	
 	cgi_path = content.substr(0, content.length() - 1);
 	content.erase();
 
-	// std::cout << cgi_path << std::endl;
 	return (0);
 }
 
-char	Config::set_auth_basic(std::string &content, std::string &auth_basic) {
+char	Config::set_auth_basic(std::string &content, std::string &auth_basic, int line_count) {
 	size_t	pos;
 
 	content.erase(0, 10);
-	if (content.empty())
-		return (1);
 	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
+		throw Error("You must specify an auth basic.", line_count);
 
 	pos = content.find_first_of("\"");
 	while (pos != std::string::npos) {
 		content.erase(content.begin() + pos);
 		pos = content.find_first_of("\"");
 	}
-	
 	auth_basic = content.substr(0, content.length() - 1);
 	content.erase();
 
-	// std::cout << auth_basic << std::endl;
 	return (0);
 }
 
-char	Config::set_auth_basic_user_file(std::string &content, std::string &auth_basic_user_file) {
+char	Config::set_auth_basic_user_file(std::string &content, std::string &auth_basic_user_file, int line_count) {
 	content.erase(0, 20);
-	if (content.empty())
-		return (1);
 	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
+		throw Error("You must specify an auth basic user file.", line_count);
 	
 	if (content[0] != '/' && content.find_first_of(" ") == std::string::npos)
-		return (1);
+		throw Error("Only absolute path accepted.", line_count);
 	
 	auth_basic_user_file = content.substr(0, content.length() - 1);
 	content.erase();
 
-	// std::cout << auth_basic_user_file << std::endl;
 	return (0);
 }

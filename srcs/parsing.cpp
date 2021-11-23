@@ -47,16 +47,10 @@ char	parse(std::vector<Server> &servers, char *path) {
 		}
 		
 		Server	serv;
-		try {
-			config.parse(serv, file, line_count);
-		}
-		catch(std::exception &e) {
-			std::cout << e.what() << std::endl;
-			return (1);
-		}
+		config.parse(serv, file, line_count);
 		for (std::vector<Server>::iterator it = servers.begin(); it != servers.end(); it++) {
 			if ((*it).get_port() == serv.get_port()) {
-				return (1);
+				throw Config::Error("duplicate port.", line_count);
 			}
 			for (std::vector<std::string>::iterator name = serv.get_names().begin(); name != serv.get_names().end(); name++) {
 				for (std::vector<std::string>::iterator old_name = (*it).get_names().begin(); old_name != (*it).get_names().end(); old_name++) {

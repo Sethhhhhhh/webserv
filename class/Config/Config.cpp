@@ -31,11 +31,11 @@ char	Config::set_listen(std::string &content, int line_count) {
 	unsigned int	expected_port;
 	
 	content.erase(0, 6);
-	if (content.empty())
+	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
 		throw Error("no content.", line_count);
 	if (server->get_port() && !server->get_host().empty())
 		throw Error("duplicate host.", line_count);
-	remove_extra_space(content, 0);
 
 	pos = content.find(":");
 	if (pos != std::string::npos) {
@@ -67,9 +67,9 @@ char	Config::set_error_pages(std::string &content, int line_count) {
 
 	error = 0;
 	content.erase(0, 10);
-	if (content.empty())
-		return (1);
 	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
+		return (1);
 
 	pos = content.find_first_of(" ");
 	if (pos == std::string::npos)
@@ -92,16 +92,14 @@ char	Config::set_error_pages(std::string &content, int line_count) {
 	return (0);
 }
 
-char	Config::set_server_names(std::string &content) {
+char	Config::set_server_names(std::string &content, int line_count) {
 	std::string name;
 	size_t 		pos;
 
 	content.erase(0, 11);
-	if (!server->get_names().empty())
-		return (1);
 	remove_extra_space(content, 0);
-	if (content.empty())
-		return (1);
+	if (content.substr(0, content.size() - 1).empty())
+		throw Error("You must specify a name.", line_count);
 
 	pos = content.find_first_of(" ");
 	while (pos != std::string::npos) {
@@ -115,16 +113,16 @@ char	Config::set_server_names(std::string &content) {
 	return (0);
 }
 
-char	Config::set_client_max_body_size(std::string &content) {
+char	Config::set_client_max_body_size(std::string &content, int line_count) {
 	content.erase(0, 20);
-	if (content.empty())
-		return (1);
 	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
+		throw Error("You must specify a client max body size.", line_count);
 
 	if (server->get_client_max_body_size())
-		return (1);
+		throw Error("Client max body size already specified.", line_count);
 	if (content.find_first_not_of("0123456789MmGgKk;") != std::string::npos)
-		return (1);
+		throw Error("Bad format.", line_count);
 	server->set_client_max_body_size(static_cast<size_t>(std::atol(content.c_str())));
 	if (content[content.length() - 2] == 'G' || content[content.length() - 2] == 'g')
 		server->set_client_max_body_size(server->get_client_max_body_size() * 1000000000);
@@ -136,17 +134,17 @@ char	Config::set_client_max_body_size(std::string &content) {
 	return (0);
 }
 
-char	Config::set_root(std::string &content) {
+char	Config::set_root(std::string &content, int line_count) {
 	content.erase(0, 4);
-	if (content.empty())
-		return (1);
 	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
+		throw Error("You must specified a path for the root.", line_count);
 
 	if (!server->get_root().empty())
-		return (1);
+		throw Error("Root already specified.", line_count);
 	
 	if (content[0] != '/')
-		return (1);
+		throw Error("Only absolute path accepted.", line_count);
 	server->set_root(content.substr(0, content.length() - 1));
 	content.erase();
 	return (0);
@@ -171,7 +169,7 @@ char	Config::set_location(std::ifstream & file, std::string &content, int &line_
 	path = content.substr(0, pos);
 	for (std::vector<s_location>::iterator it = server->get_locations().begin(); it < server->get_locations().end(); it++) {
 		if ((*it).path == path) {
-			return (1);		
+			throw Error("Duplicate location path.", line_count);	
 		}
 	}
 	location.path = path;
@@ -179,13 +177,11 @@ char	Config::set_location(std::ifstream & file, std::string &content, int &line_
 	remove_extra_space(content, 0);
 	if (content.empty() || content[0] != '{')
 		return (1);
-
 	location.client_max_body_size = 0;
 	location.autoindex = false;
 	while (std::getline(file, content)) {
 		remove_extra_space(content, 0);
 		if (content.empty() || content[0] == '#') {
-			std::cout << line_count << std::endl;
 			line_count++;
 			continue;
 		}
@@ -196,50 +192,33 @@ char	Config::set_location(std::ifstream & file, std::string &content, int &line_
 		}
 		if (count_char_in_string(content, ';') > 1)
 			throw Error("There is more than one semicolon at the end of the line.", line_count);
-		if (!content.compare(0, 4, "root")) {
-			if (set_location_root(content, location.root)) {
-				
-				return (1);
-			}
-		}
-		else if (!content.compare(0, 6, "method")) {
-			if (set_method(content, location.methods))
-				return (1);
-		}
-		else if (!content.compare(0, 9, "autoindex")) {
-			if (set_autoindex(content, location.autoindex))
-				return (1);
-		}
-		else if (!content.compare(0, 5, "index")) {
-			if (set_index(content, location.index))
-				return (1);
-		}
-		else if (!content.compare(0, 13, "cgi_extension")) {
-			if (set_cgi_extension(content, location.cgi_extension))
-				return (1);
-		}
-		else if (!content.compare(0, 8, "cgi_path")) {
-			if (set_cgi_path(content, location.cgi_path))
-				return (1);
-		}
-		else if (!content.compare(0, 20, "client_max_body_size")) {
-			if (set_location_client_max_body_size(content, location.client_max_body_size))
-				return (1);
-		}
-		else if (!content.compare(0, 20, "auth_basic_user_file")) {
-			if (set_auth_basic_user_file(content, location.auth_basic_user_file))
-				return (1);
-		}
-		else if (!content.compare(0, 10, "auth_basic")) {
-			if (set_auth_basic(content, location.auth_basic))
-				return (1);
-		}
+		if (!content.compare(0, 4, "root"))
+			set_location_root(content, location.root, line_count);
+		else if ("method" == content.substr(0, content.find_first_of(" \t")))
+			set_method(content, location.methods, line_count);
+		else if ("autoindex" == content.substr(0, content.find_first_of(" \t")))
+			set_autoindex(content, location.autoindex, line_count);
+		else if ("index" == content.substr(0, content.find_first_of(" \t")))
+			set_index(content, location.index, line_count);
+		else if ("cgi_extension" == content.substr(0, content.find_first_of(" \t")))
+			set_cgi_extension(content, location.cgi_extension, line_count);
+		else if ("cgi_path" == content.substr(0, content.find_first_of(" \t")))
+			set_cgi_path(content, location.cgi_path, line_count);
+		else if ("client_max_body_size" == content.substr(0, content.find_first_of(" \t")))
+			set_location_client_max_body_size(content, location.client_max_body_size, line_count);
+		else if ("auth_basic_user_file" == content.substr(0, content.find_first_of(" \t")))
+			set_auth_basic_user_file(content, location.auth_basic_user_file, line_count);
+		else if ("auth_basic" == content.substr(0, content.find_first_of(" \t")))
+			set_auth_basic(content, location.auth_basic, line_count);
 		else if (content[0] == '}') {
 			server->set_locations(location);
-
 			return (0);
 		}
+		else {
+			throw Error("Unknow keyword.", line_count);
+		}
 	}
+	
 	return (0);
 }
 
@@ -252,7 +231,6 @@ char	Config::parse(Server &server, std::ifstream &file, int &line_count) {
 	bracket = 0;
 	this->server = &server;
 	while (std::getline(file, content)) {
-		
 		remove_extra_space(content, 0);
 		if (content.empty() || content[0] == '#') {
 			line_count++;
@@ -266,35 +244,26 @@ char	Config::parse(Server &server, std::ifstream &file, int &line_count) {
 		if (count_char_in_string(content, ';') > 1) {
 			throw Error("There is more than one semicolon at the end of the line.", line_count);
 		}
-		if (!content.compare(0, 6, "listen")) {
+		if ("listen" == content.substr(0, content.find_first_of(" \t")))
 			set_listen(content, line_count);
-		}
-		else if (!content.compare(0, 10, "error_page")) {
+		else if ("error_page" == content.substr(0, content.find_first_of(" \t")))
 			set_error_pages(content, line_count);
-		}
-		else if (!content.compare(0, 11, "server_name")) {
-			set_server_names(content);
-		}
-		else if (!content.compare(0, 20, "client_max_body_size")) {
-			set_client_max_body_size(content);
-		}
-		else if (!content.compare(0, 4, "root")) {
-			set_root(content);
-		}
-		else if (!content.compare(0, 8, "location")) {
-			if (set_location(file, content, line_count)) {
-				return (1);
-			}
-		}
+		else if ("server_name" == content.substr(0, content.find_first_of(" \t")))
+			set_server_names(content, line_count);
+		else if ("client_max_body_size" == content.substr(0, content.find_first_of(" \t")))
+			set_client_max_body_size(content, line_count);
+		else if ("root" == content.substr(0, content.find_first_of(" \t")))
+			set_root(content, line_count);
+		else if ("location" == content.substr(0, content.find_first_of(" \t")))
+			set_location(file, content, line_count);
 		else if (content[0] == '}') {
 			bracket = 1;
 			break;
 		}
-		else {
-			return (1);
-		}
+		else
+			throw Error("Unknow keyword.", line_count);
 	}
 	if (!bracket)
-		return (1);
+		throw Error("Missing bracket.", line_count);
 	return (0);
 }
