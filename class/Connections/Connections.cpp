@@ -70,7 +70,7 @@ int Connections::init()
 		return -1;
 	else
 	{
-		max_fd = *std::max_element(fd_list.begin(), fd_list.end());
+		max_fd = *std::max_element(	fd_list.begin(), fd_list.end());
 		return 0;
 	}
 }
