@@ -54,6 +54,6 @@ class Server {
 		int											_fd;
 };
 
-char	        parse(std::vector<Server*> &server, char *path);
+char	parse(std::vector<Server> &servers, char *path);
 
 #endif

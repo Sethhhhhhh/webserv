@@ -6,12 +6,24 @@ Server::Server(void) {
 }
 
 
-Server::Server(const Server &c) {
-	(void)c;
+Server::Server(const Server &c) 
+{
+	*this = c;
 }
 
-Server& Server::operator=(const Server &c) {
-	(void)c;
+Server& Server::operator=(const Server &c)
+{
+	if (this != &c)
+	{
+		_error_pages = c._error_pages;
+		_names = c._names;
+		_locations = c._locations;
+		_host = c._host;
+		_root = c._root;
+		_port = c._port;
+		_client_max_body_size = c._client_max_body_size;
+		_fd = c._fd;
+	}
 	return *this;
 }
 
