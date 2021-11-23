@@ -100,3 +100,13 @@ std::string	status_code(int code)
 	}
 	return "";
 }
+
+int		slash_compare(std::string &cmp, std::string &uri)
+{
+	if (uri.find(cmp) != std::string::npos)
+	{
+		std::cout << "found : " << cmp << std::endl;
+    	return (cmp.length());
+	}
+	return (0);
+}

@@ -31,7 +31,7 @@ class Connections
 
 		std::list<int> fd_list;
 		std::vector<Client*> clients;
-		std::vector<Server*> servers;
+		std::vector<Server> servers;
 
 };
 

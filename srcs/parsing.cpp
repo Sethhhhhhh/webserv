@@ -15,7 +15,7 @@ void	remove_extra_space(std::string & str, size_t pos) {
 }
 
 
-char	parse(std::vector<Server*> &servers, char *path) {
+char	parse(std::vector<Server> &servers, char *path) {
 	std::ifstream	file(path);
 	std::string		content;
 	Config			config;
@@ -46,20 +46,20 @@ char	parse(std::vector<Server*> &servers, char *path) {
 			return (1);
 		}
 		
-		Server	*serv = new Server;
+		Server	serv;
 		try {
-			config.parse(*serv, file, line_count);
+			config.parse(serv, file, line_count);
 		}
 		catch(std::exception &e) {
 			std::cout << e.what() << std::endl;
 			return (1);
 		}
-		for (std::vector<Server *>::iterator it = servers.begin(); it != servers.end(); it++) {
-			if ((*it)->get_port() == serv->get_port()) {
+		for (std::vector<Server>::iterator it = servers.begin(); it != servers.end(); it++) {
+			if ((*it).get_port() == serv.get_port()) {
 				return (1);
 			}
-			for (std::vector<std::string>::iterator name = serv->get_names().begin(); name != serv->get_names().end(); name++) {
-				for (std::vector<std::string>::iterator old_name = (*it)->get_names().begin(); old_name != (*it)->get_names().end(); old_name++) {
+			for (std::vector<std::string>::iterator name = serv.get_names().begin(); name != serv.get_names().end(); name++) {
+				for (std::vector<std::string>::iterator old_name = (*it).get_names().begin(); old_name != (*it).get_names().end(); old_name++) {
 					// std::cout << *old_name << std::endl;
 					// std::cout << *name << std::endl;
 				}

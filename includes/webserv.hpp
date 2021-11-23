@@ -62,6 +62,7 @@ void	        remove_extra_space(std::string & str, size_t pos);
 std::string		cut_line(std::string &str, bool cond, int back);
 std::string		MIME_types(std::string	&str);
 std::string		Last_modified(std::string &path);
+int             slash_compare(std::string &cmp, std::string &uri);
 
 std::string     to_string(int n);
 
