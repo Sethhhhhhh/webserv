@@ -41,8 +41,8 @@ class Config {
 		Server	*server;
 
 		/* Set (server config) */
-		char	set_listen(std::string &content);
-		char	set_error_pages(std::string &content);
+		char	set_listen(std::string &content, int line_count);
+		char	set_error_pages(std::string &content, int line_count);
 		char	set_server_names(std::string &content);
 		char	set_client_max_body_size(std::string &content);
 		char	set_root(std::string &content);

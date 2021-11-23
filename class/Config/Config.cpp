@@ -26,22 +26,22 @@ char	Config::check_ip(void) const {
 }
 
 /* Set */
-char	Config::set_listen(std::string &content) {
+char	Config::set_listen(std::string &content, int line_count) {
 	size_t			pos;
 	unsigned int	expected_port;
 	
 	content.erase(0, 6);
 	if (content.empty())
-		return (1);
+		throw Error("no content.", line_count);
 	if (server->get_port() && !server->get_host().empty())
-		return (1);
+		throw Error("duplicate host.", line_count);
 	remove_extra_space(content, 0);
 
 	pos = content.find(":");
 	if (pos != std::string::npos) {
 		expected_port = std::atoi(content.substr(pos + 1, content.length()).c_str());
 		if (expected_port <= 0 || expected_port > 65535)
-			return (1);
+			throw Error("The port used is not valid.", line_count);
 		server->set_port(expected_port);
 		server->set_host(content.substr(0, pos));
 	}
@@ -54,12 +54,12 @@ char	Config::set_listen(std::string &content) {
 		server->set_host(std::string("127.0.0.1"));
 	
 	if (check_ip())
-		return (1);
+		throw Error("The ip address is invalid.", line_count);
 	content.erase();
 	return (0);
 }
 
-char	Config::set_error_pages(std::string &content) {
+char	Config::set_error_pages(std::string &content, int line_count) {
 	std::string	path;
 	std::string	error_expected;
 	size_t		error;
@@ -74,25 +74,21 @@ char	Config::set_error_pages(std::string &content) {
 	pos = content.find_first_of(" ");
 	if (pos == std::string::npos)
 		return (1);
-	
+
 	error_expected = content.substr(0, pos);
 	if (error_expected.find_first_not_of("0123456789") != std::string::npos)
-		return (1);
+		throw Error("The error is invalid.", line_count);
 	error = std::atoi(error_expected.c_str());
 
 	content.erase(0, pos);
 	remove_extra_space(content, 0);
 	if (content.empty())
-		return (1);
+		throw Error("No error related path is used.", line_count);
 
 	if (content[0] != '/' || content.substr(content.length() - 6, 5) != std::string(".html"))
-		return (1);
+		throw Error("The path must be absolute and must end in .html.", line_count);
 	server->set_error_pages(error, content.substr(0, content.length() - 1));
 
-	// for (std::vector<std::pair<int, std::string> >::iterator it = server->_error_pages.begin(); it < server->_error_pages.end(); it++) {
-	// 	std::cout << it->first << std::endl;
-	// 	std::cout << it->second << std::endl;
-	// }
 	return (0);
 }
 
@@ -202,6 +198,7 @@ char	Config::set_location(std::ifstream & file, std::string &content, int &line_
 			throw Error("There is more than one semicolon at the end of the line.", line_count);
 		if (!content.compare(0, 4, "root")) {
 			if (set_location_root(content, location.root)) {
+				
 				return (1);
 			}
 		}
@@ -270,10 +267,10 @@ char	Config::parse(Server &server, std::ifstream &file, int &line_count) {
 			throw Error("There is more than one semicolon at the end of the line.", line_count);
 		}
 		if (!content.compare(0, 6, "listen")) {
-			set_listen(content);
+			set_listen(content, line_count);
 		}
 		else if (!content.compare(0, 10, "error_page")) {
-			set_error_pages(content);
+			set_error_pages(content, line_count);
 		}
 		else if (!content.compare(0, 11, "server_name")) {
 			set_server_names(content);
