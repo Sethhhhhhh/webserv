@@ -31,7 +31,8 @@
 #endif
 
 /* Location struct */
-struct	s_location {
+struct	s_location 
+{
     std::vector<std::string>	methods;
     std::vector<std::string>	cgi_extension;
     std::vector<std::string>	index;
@@ -47,6 +48,18 @@ struct	s_location {
     bool						autoindex;
 
     size_t						client_max_body_size;
+};
+
+struct  s_config 
+{
+        std::map<int, std::string>					error_pages;
+		std::vector<std::string>					names;
+		std::vector<s_location>						locations;
+		std::string									host;
+		std::string									root;
+		unsigned int								port;
+		unsigned int								client_max_body_size;
+		int											fd;
 };
 
 typedef struct  s_chunk

@@ -18,6 +18,7 @@ class Server {
 		void	respond(int fd, Request &request);
 
 		/* Get */
+		s_config									get_config() const;
 		std::map<int, std::string>					get_error_pages() const;
 		std::vector<std::string>					&get_names();
 		std::vector<s_location>						&get_locations();

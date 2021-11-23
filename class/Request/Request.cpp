@@ -154,27 +154,45 @@ void		Request::parse_language(void)
 	}
 }
 
-void		Request::parse_config(std::vector<s_location> &locs)
+void		Request::parse_config(s_config conf)
 {
 	std::string		match = "";
+	s_location		tmp;
 
-	for (unsigned long i = 0; i < locs.size(); i++)
+	for (unsigned long i = 0; i < conf.locations.size(); i++)
 	{
-		if (locs[i].path == _uri)
+		if (conf.locations[i].path == _uri)
 		{
-			match = locs[i].path;
+			match = conf.locations[i].path;
+			tmp = conf.locations[i];
 			break ;
 		}
-		if (_uri.find(locs[i].path) != std::string::npos && _uri.find(locs[i].path) == 0)
+		if (_uri.find(conf.locations[i].path) != std::string::npos && _uri.find(conf.locations[i].path) == 0)
 		{
-			if (locs[i].path.length() > match.length())
-				match = locs[i].path;
+			if (conf.locations[i].path.length() > match.length())
+			{
+				match = conf.locations[i].path;
+				tmp = conf.locations[i];
+			}
 		}
 	}
-	std::cout << "match == " << match << std::endl;
+	_conf.error_pages = conf.error_pages;
+	_conf.names = conf.names;
+	_conf.host = conf.host;
+	_conf.root = (tmp.root != "") ? tmp.root : conf.root;
+	_conf.methods = tmp.methods;
+	_conf.cgi_extension = tmp.cgi_extension;
+	_conf.index = tmp.index ;
+	_conf.cgi_path = tmp.cgi_path;
+	_conf.upload_path = tmp.upload_path;
+	_conf.auth_basic_user_file = tmp.auth_basic_user_file;
+	_conf.auth_basic = tmp.auth_basic;
+	_conf.upload_eanable = tmp.upload_eanable;
+	_conf.autoindex = tmp.autoindex;
+	_conf.client_max_body_size = tmp.client_max_body_size;
 }
 
-void		Request::parse(std::string str, std::vector<s_location>	&locs)
+void		Request::parse(std::string str, s_config conf)
 {
 	std::string		line;
 	std::string		key;
@@ -191,7 +209,8 @@ void		Request::parse(std::string str, std::vector<s_location>	&locs)
 		_version = line.substr(0, line.find(" "));
 		line = cut_line(_raw_request, true, 0);
 		_status = Request::HEADERS;
-		parse_config(locs);
+		parse_config(conf);
+		print_config();
 	}
 	while (_status == Request::HEADERS && line.find(":") != std::string::npos)
 	{
@@ -226,3 +245,34 @@ void	Request::print_request(void)
 	std::cout << "body :\n" << std::endl;
 	std::cout << _body << std::endl;
 }
+
+void	Request::print_config(void)
+{
+	std::cout << "REQUEST CONFIG\n#######" << std::endl;
+	std::cout << "error pages : ";
+	for (std::map<int, std::string>::iterator it = _conf.error_pages.begin(); it != _conf.error_pages.end(); it++)
+		std::cout << it->first << " " << it->second << std::endl;
+	std::cout << "names : ";
+	for (std::vector<std::string>::iterator it = _conf.names.begin(); it != _conf.names.end(); it++)
+		std::cout << *it << " ";
+	std::cout << "\nhost : " << _conf.host << std::endl;
+	std::cout << "root : " << _conf.root << std::endl;
+	std::cout << "methods : ";
+	
+	for (std::vector<std::string>::iterator it = _conf.methods.begin(); it != _conf.methods.end(); it++)
+		std::cout << *it << " ";
+	std::cout << "\ncgi extension  ";
+	for (std::vector<std::string>::iterator it = _conf.cgi_extension.begin(); it != _conf.cgi_extension.end(); it++)
+		std::cout << *it << " ";
+	std::cout << "\ncgi path " << _conf.cgi_path  << std::endl;
+	std::cout << "index : ";
+	for (std::vector<std::string>::iterator it = _conf.index.begin(); it != _conf.index.end(); it++)
+		std::cout << *it << " ";
+	std::cout << "upload_path " << _conf.upload_path << std::endl;
+	std::cout << "auth_basic_user_file " << _conf.auth_basic_user_file << std::endl;
+	std::cout << "auth_basic " << _conf.auth_basic << std::endl;
+	std::cout << "upload_eanable " << _conf.upload_eanable << std::endl;
+	std::cout << "auto index " <<std::boolalpha << 	_conf.autoindex << std::endl;
+	std::cout << "client body size " << _conf.client_max_body_size << std::endl;
+	std::cout << "##########" << std::endl;
+} 

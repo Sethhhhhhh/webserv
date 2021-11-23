@@ -3,6 +3,24 @@
 
 # include "../../includes/webserv.hpp"
 
+struct	s_request_config
+{
+	std::map<int, std::string>					error_pages;
+	std::vector<std::string>					names;
+	std::string									host;
+	std::string									root;
+	std::vector<std::string>					methods;
+	std::vector<std::string>					cgi_extension;
+    std::vector<std::string>					index;
+	std::string									cgi_path;
+    std::string									upload_path;
+    std::string									auth_basic_user_file;
+    std::string									auth_basic;
+    bool										upload_eanable;
+    bool										autoindex;
+    size_t										client_max_body_size;
+};
+
 class Request {
 	private:
 		
@@ -16,6 +34,7 @@ class Request {
 		std::string							_lan;
 		int									_ret_code;
 		t_chunk								_chunk;
+		s_request_config					_conf;
 
 
 	public:
@@ -24,13 +43,15 @@ class Request {
 		Request& operator=(const Request &c);
 		~Request();
 
-		void	parse(std::string str, std::vector<s_location> &locs);
-		void	parse_config(std::vector<s_location> &locs);
+		void	parse(std::string str, s_config conf);
+		void	parse_config(s_config conf);
 		void	print_request(void);
 		void	check_parsing(void);
 		void	parse_body(void);
 		void	parse_chunked_body(void);
 		void	parse_language(void);
+		void	print_config(void);
+		
 
 		enum         status
 		{

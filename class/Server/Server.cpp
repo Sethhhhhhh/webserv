@@ -66,6 +66,21 @@ unsigned int								Server::get_port() const {return _port;}
 int											Server::get_fd() const {return _fd;}
 unsigned int								Server::get_client_max_body_size() const {return _client_max_body_size;}
 
+s_config									Server::get_config() const
+{
+	s_config	tmp;
+
+	tmp.client_max_body_size = _client_max_body_size;
+	tmp.error_pages = _error_pages;
+	tmp.fd = _fd;
+	tmp.host = _host;
+	tmp.locations = _locations;
+	tmp.names = _names;
+	tmp.port = _port;
+	tmp.root = _root;
+	return (tmp);
+}
+
 /* Set */
 char	Server::set_error_pages(int id, std::string path) {
 	_error_pages[id] = path;

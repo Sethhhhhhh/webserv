@@ -43,14 +43,13 @@ void 	Client::receive_request(void)
 	int ret;
 
 	ret = recv(_fd, buffer, 1023, 0);
-	std::cout << "vec size " << _server->get_locations().size() << std::endl;
 	buffer[ret] = 0;
 	_received_request += buffer;
 	_bytes_request += ret;
 	if (buffer[ret-1] == '\n')
 	{
 		_ready_request = true;
-		_request.parse(_received_request, _server->get_locations());
+		_request.parse(_received_request, _server->get_config());
 	}
 }
 
