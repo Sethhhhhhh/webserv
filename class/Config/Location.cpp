@@ -192,3 +192,35 @@ char	Config::set_auth_basic_user_file(std::string &content, std::string &auth_ba
 
 	return (0);
 }
+
+char	Config::set_location_error_pages(std::string &content, std::map<int, std::string> &error_pages, int line_count) {
+	std::string	path;
+	std::string	error_expected;
+	size_t		error;
+	size_t		pos;
+
+	error = 0;
+	content.erase(0, 10);
+	remove_extra_space(content, 0);
+	if (content.substr(0, content.size() - 1).empty())
+		return (1);
+	pos = content.find_first_of(" ");
+	if (pos == std::string::npos)
+		return (1);
+
+	error_expected = content.substr(0, pos);
+	if (error_expected.find_first_not_of("0123456789") != std::string::npos)
+		throw Error("The error is invalid.", line_count);
+	error = std::atoi(error_expected.c_str());
+
+	content.erase(0, pos);
+	remove_extra_space(content, 0);
+	if (content.empty())
+		throw Error("No error related path is used.", line_count);
+
+	if (content[0] != '/' || content.substr(content.length() - 6, 5) != std::string(".html"))
+		throw Error("The path must be absolute and must end in .html.", line_count);
+	error_pages[error] = content.substr(0, content.length() - 1);
+
+	return (0);
+}

@@ -14,7 +14,6 @@ void	remove_extra_space(std::string & str, size_t pos) {
 		str.erase(str.begin() + pos);
 }
 
-
 char	parse(std::vector<Server> &servers, char *path) {
 	std::ifstream	file(path);
 	std::string		content;
@@ -30,20 +29,19 @@ char	parse(std::vector<Server> &servers, char *path) {
 	while (std::getline(file, content)) {
 		
 		remove_extra_space(content, 0);
-			
-		if (content.empty()) {
+		if (content.empty() || content[0] == '#') {
 			line_count++;
 			continue;
 		}
 		
 		line_count++;
 		if (!content.compare(0, 5, "server")) {
-			return (1);
+			throw Config::Error("I don't know.", line_count);
 		}
 		remove_extra_space(content, 6);
 		
 		if (!content.compare(0, 6, "server{")) {
-			return (1);
+			throw Config::Error("I don't know.", line_count);
 		}
 		
 		Server	serv;
@@ -54,8 +52,9 @@ char	parse(std::vector<Server> &servers, char *path) {
 			}
 			for (std::vector<std::string>::iterator name = serv.get_names().begin(); name != serv.get_names().end(); name++) {
 				for (std::vector<std::string>::iterator old_name = (*it).get_names().begin(); old_name != (*it).get_names().end(); old_name++) {
-					// std::cout << *old_name << std::endl;
-					// std::cout << *name << std::endl;
+					if (*old_name == *name) {
+						throw Config::Error("Duplicate name.", line_count);
+					}
 				}
 			}
 		}

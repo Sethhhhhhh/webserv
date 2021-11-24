@@ -176,7 +176,8 @@ void		Request::parse_config(s_config conf)
 			}
 		}
 	}
-	_conf.error_pages = conf.error_pages;
+	_conf.error_pages = tmp.error_pages;
+	_conf.error_pages.insert(conf.error_pages.begin(), conf.error_pages.end());
 	_conf.names = conf.names;
 	_conf.host = conf.host;
 	_conf.root = (tmp.root != "") ? tmp.root : conf.root;

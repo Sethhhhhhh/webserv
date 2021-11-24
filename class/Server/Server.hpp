@@ -41,10 +41,9 @@ class Server {
 		/* Usuful func */
 		void	print(void);
 
-		/* I don't know */
-
 	private:
 		/* Server config */
+		
 		std::map<int, std::string>					_error_pages;
 		std::vector<std::string>					_names;
 		std::vector<s_location>						_locations;

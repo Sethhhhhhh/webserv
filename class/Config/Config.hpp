@@ -49,8 +49,9 @@ class Config {
 		char	set_location(std::ifstream & file, std::string &content, int & line_count);
 
 		/* Set (location config) */
-		char	set_location_root(std::string &content, std::string & root, int line_count);
-		char	set_location_client_max_body_size(std::string &content, size_t & client_max_body_size, int line_count);
+		char	set_location_error_pages(std::string &content, std::map<int, std::string> &error_pages, int line_count);
+		char	set_location_root(std::string &content, std::string &root, int line_count);
+		char	set_location_client_max_body_size(std::string &content, size_t &client_max_body_size, int line_count);
 		char	set_autoindex(std::string &content, bool & autoindex, int line_count);
 		char	set_cgi_extension(std::string &content, std::vector<std::string> &cgi_extension, int line_count);
 		char	set_method(std::string &content, std::vector<std::string> &method, int line_count);

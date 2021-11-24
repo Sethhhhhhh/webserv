@@ -194,6 +194,12 @@ void	Server::print(void) {
 				std::cout << ", ";
 		}
 		std::cout << std::endl;
+	
+		std::cout << "error_pages: ";
+		for (std::map<int, std::string>::iterator m = it->error_pages.begin(); m != it->error_pages.end(); m++) {
+			std::cout << "[" << m->first << "]" << m->second << ", ";
+		}
+		std::cout << std::endl;
 	}
 
 

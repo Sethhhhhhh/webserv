@@ -10,7 +10,7 @@ Config::Config(Config & src) {
 	return ;
 }
 
-Config &	Config::operator=(Config & src) {
+Config &	Config::operator=(Config &src) {
 	(void)src;
 	return (*this);
 }
@@ -151,8 +151,7 @@ char	Config::set_root(std::string &content, int line_count) {
 }
 
 /* PARSE LOCATION */
-
-char	Config::set_location(std::ifstream & file, std::string &content, int &line_count) {
+char	Config::set_location(std::ifstream &file, std::string &content, int &line_count) {
 	s_location		location;
 	std::string		path;
 	size_t			pos;
@@ -187,36 +186,38 @@ char	Config::set_location(std::ifstream & file, std::string &content, int &line_
 		}
 		line_count++;
 
-		if (content[content.length() - 1] != ';' && content[0] != '}') {
+		if (content[content.length() - 1] != ';' && content[0] != '}')
 			throw Error("semicolon required at the end of the line.", line_count);
-		}
 		if (count_char_in_string(content, ';') > 1)
 			throw Error("There is more than one semicolon at the end of the line.", line_count);
-		if (!content.compare(0, 4, "root"))
+		
+		std::string	str = content.substr(0, content.find_first_of(" \t"));
+		if ("root" == str)
 			set_location_root(content, location.root, line_count);
-		else if ("method" == content.substr(0, content.find_first_of(" \t")))
+		else if ("methods" == str)
 			set_method(content, location.methods, line_count);
-		else if ("autoindex" == content.substr(0, content.find_first_of(" \t")))
+		else if ("autoindex" == str)
 			set_autoindex(content, location.autoindex, line_count);
-		else if ("index" == content.substr(0, content.find_first_of(" \t")))
+		else if ("index" == str)
 			set_index(content, location.index, line_count);
-		else if ("cgi_extension" == content.substr(0, content.find_first_of(" \t")))
+		else if ("cgi_extension" == str)
 			set_cgi_extension(content, location.cgi_extension, line_count);
-		else if ("cgi_path" == content.substr(0, content.find_first_of(" \t")))
+		else if ("cgi_path" == str)
 			set_cgi_path(content, location.cgi_path, line_count);
-		else if ("client_max_body_size" == content.substr(0, content.find_first_of(" \t")))
+		else if ("client_max_body_size" == str)
 			set_location_client_max_body_size(content, location.client_max_body_size, line_count);
-		else if ("auth_basic_user_file" == content.substr(0, content.find_first_of(" \t")))
+		else if ("auth_basic_user_file" == str)
 			set_auth_basic_user_file(content, location.auth_basic_user_file, line_count);
-		else if ("auth_basic" == content.substr(0, content.find_first_of(" \t")))
+		else if ("auth_basic" == str)
 			set_auth_basic(content, location.auth_basic, line_count);
+		else if ("error_page" == str)
+			set_location_error_pages(content, location.error_pages, line_count);
 		else if (content[0] == '}') {
 			server->set_locations(location);
 			return (0);
 		}
-		else {
+		else
 			throw Error("Unknow keyword.", line_count);
-		}
 	}
 	
 	return (0);
@@ -265,5 +266,7 @@ char	Config::parse(Server &server, std::ifstream &file, int &line_count) {
 	}
 	if (!bracket)
 		throw Error("Missing bracket.", line_count);
+	
+	server.print();
 	return (0);
 }
