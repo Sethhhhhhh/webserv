@@ -1,30 +1,23 @@
 #include "Connections.hpp"
 
 
-Connections::Connections()
-{
+Connections::Connections() {
 }
 
-Connections::Connections(const Connections &c)
-{
+Connections::Connections(const Connections &c) {
 	(void)c;
-
 }
 
-
-Connections& Connections::operator=(const Connections &c)
-{
+Connections& Connections::operator=(const Connections &c) {
 	(void)c;
 
 	return *this;
 }
 
-Connections::~Connections()
-{
+Connections::~Connections() {
 }
 
-int Connections::init()
-{
+int Connections::init() {
 	struct sockaddr_in addr;
 	int		optval;
 
@@ -48,6 +41,7 @@ int Connections::init()
 		}
 		addr.sin_addr.s_addr = inet_addr((server)->get_host().c_str());
 		addr.sin_port = htons((server)->get_port());
+		std::cout << (server)->get_port() << std::endl;
 		if (bind(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
 		{
 			servers.erase(server);
@@ -75,8 +69,7 @@ int Connections::init()
 	}
 }
 
-int Connections::add_client(Server &server)
-{
+int Connections::add_client(Server &server) {
 	Client *new_client;
 	int		fd;
 
@@ -101,8 +94,7 @@ int Connections::add_client(Server &server)
 	return 0;
 }
 
-int Connections::check_clients()
-{
+int Connections::check_clients() {
 	int fd;
 
 	for (std::vector<Client*>::iterator client = clients.begin(); 
@@ -129,8 +121,7 @@ int Connections::check_clients()
 	return 0;
 }
 
-void	Connections::loop(void)
-{
+void	Connections::loop(void) {
 	std::cout << "Waiting for connection." << std::endl;
 	while (1)
 	{

@@ -1,19 +1,17 @@
 #include "Server.hpp"
 
 Server::Server(void) {
-	_port = 80;
+	_port = 8080;
 	_host = "127.0.0.1";
 	_root = "";
 	_client_max_body_size = 536870912;
 }
 
-Server::Server(const Server &c) 
-{
+Server::Server(const Server &c) {
 	*this = c;
 }
 
-Server& Server::operator=(const Server &c)
-{
+Server& Server::operator=(const Server &c) {
 	if (this != &c)
 	{
 		_error_pages = c._error_pages;

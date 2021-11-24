@@ -22,9 +22,8 @@ char	parse(std::vector<Server> &servers, char *path) {
 	int			line_count;
 
 	if (!file.is_open()) {
-		return (1);
+		throw Config::Error("Unable to open config file.", 0);
 	}
-
 	line_count = 0;
 	while (std::getline(file, content)) {
 		
@@ -60,6 +59,8 @@ char	parse(std::vector<Server> &servers, char *path) {
 		}
 		servers.push_back(serv);
 	}
+	if (!servers.size())
+		throw Config::Error("No server found.", 0);
 
 	return (0);
 }

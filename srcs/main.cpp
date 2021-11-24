@@ -5,8 +5,11 @@ int	main(int ac, char **av)
 {
 	Connections connections;
 
-	if (ac != 2)
+	if (ac != 2) {
+		std::cerr << "No config file found." << std::endl;
 		return (1);
+	}
+
 	try {
 		parse(connections.servers, av[1]);
 	}
@@ -14,7 +17,7 @@ int	main(int ac, char **av)
 		std::cerr << e.what() << std::endl;
 		return (1);
 	}
-
+	
 	if (connections.init() == -1)
 		return (1);
 	
