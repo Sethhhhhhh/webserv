@@ -1,10 +1,11 @@
 #include "Server.hpp"
 
 Server::Server(void) {
-	_port = 0;
-	_client_max_body_size = 0;
+	_port = 80;
+	_host = "127.0.0.1";
+	_root = "";
+	_client_max_body_size = 536870912;
 }
-
 
 Server::Server(const Server &c) 
 {
@@ -126,7 +127,6 @@ char	Server::set_client_max_body_size(unsigned int client_max_body_size) {
 void	Server::print(void) {
 	std::cout << "----------------------------------" << std::endl << "- SERVER INFORMATIONS -" << std::endl;
 
-
 	/* NAMES */
 	std::cout << "server_names: ";
 	for (std::vector<std::string>::iterator it = _names.begin(); it !=_names.end(); it++) {
@@ -201,7 +201,5 @@ void	Server::print(void) {
 		}
 		std::cout << std::endl;
 	}
-
-
 	std::cout << std::endl << std::endl;
 }

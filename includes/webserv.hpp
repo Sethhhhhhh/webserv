@@ -47,7 +47,7 @@ struct	s_location {
     bool						upload_eanable;
     bool						autoindex;
 
-    size_t						client_max_body_size;
+    unsigned int				client_max_body_size;
 };
 
 struct  s_config {

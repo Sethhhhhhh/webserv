@@ -17,7 +17,7 @@ char	Config::set_location_root(std::string &content, std::string &root, int line
 	return (0);
 }
 
-char	Config::set_location_client_max_body_size(std::string &content, size_t & client_max_body_size, int line_count) {
+char	Config::set_location_client_max_body_size(std::string &content, unsigned int &client_max_body_size, int line_count) {
 	content.erase(0, 20);
 	remove_extra_space(content, 0);
 	if (content.substr(0, content.size() - 1).empty())

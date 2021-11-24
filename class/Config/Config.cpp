@@ -17,7 +17,7 @@ Config &	Config::operator=(Config &src) {
 
 Config::~Config(void) {
 	return ;
-}	
+}
 
 
 char	Config::check_ip(void) const {
@@ -34,8 +34,6 @@ char	Config::set_listen(std::string &content, int line_count) {
 	remove_extra_space(content, 0);
 	if (content.substr(0, content.size() - 1).empty())
 		throw Error("no content.", line_count);
-	if (server->get_port() && !server->get_host().empty())
-		throw Error("duplicate host.", line_count);
 
 	pos = content.find(":");
 	if (pos != std::string::npos) {
@@ -150,21 +148,37 @@ char	Config::set_root(std::string &content, int line_count) {
 	return (0);
 }
 
+s_location	Config::get_default_location(void) {
+	s_location	loc;
+
+	loc.path = "/";
+	loc.root = "";
+	loc.index.push_back("");
+	loc.autoindex = false;
+	loc.upload_eanable = false;
+	loc.cgi_path = "";
+	loc.auth_basic = "";
+	loc.auth_basic_user_file = "";
+	loc.client_max_body_size = 536870912;
+
+	return (loc);
+}
+
 /* PARSE LOCATION */
 char	Config::set_location(std::ifstream &file, std::string &content, int &line_count) {
-	s_location		location;
+	s_location		location = get_default_location();
 	std::string		path;
 	size_t			pos;
 
 	content.erase(0, 8);
 	if (content.empty())
-		return (1);
+		throw Error("No path.", line_count);
 	remove_extra_space(content, 0);
 	if (content[0] != '/')
-		return (1);
+		throw Error("Only aboslute path accepted.", line_count);
 	pos = content.find_first_of(" ");
 	if (pos == std::string::npos)
-		return (1);
+		throw Error("Missing bracket.", line_count);
 	path = content.substr(0, pos);
 	for (std::vector<s_location>::iterator it = server->get_locations().begin(); it < server->get_locations().end(); it++) {
 		if ((*it).path == path) {
@@ -176,8 +190,6 @@ char	Config::set_location(std::ifstream &file, std::string &content, int &line_c
 	remove_extra_space(content, 0);
 	if (content.empty() || content[0] != '{')
 		return (1);
-	location.client_max_body_size = 0;
-	location.autoindex = false;
 	while (std::getline(file, content)) {
 		remove_extra_space(content, 0);
 		if (content.empty() || content[0] == '#') {
@@ -224,7 +236,6 @@ char	Config::set_location(std::ifstream &file, std::string &content, int &line_c
 }
 
 /* PARSE */
-
 char	Config::parse(Server &server, std::ifstream &file, int &line_count) {
 	std::string	content;
 	char		bracket;
