@@ -54,6 +54,9 @@ void		Request::check_parsing(void)
 
 	if (_headers.find("Host") == _headers.end())
 		_ret_code = 400;
+
+	if (std::find(_conf.methods.begin(), _conf.methods.end(), _method) == _conf.methods.end())
+		_ret_code = 405;
 }
 
 void	Request::parse_body()

@@ -8,6 +8,7 @@
 # include <netinet/in.h>
 # include <sys/types.h>
 # include <sys/stat.h>
+# include <fcntl.h>
 # include <time.h>
 
 # include <cstring>
@@ -74,8 +75,8 @@ void	        remove_extra_space(std::string & str, size_t pos);
 std::string		cut_line(std::string &str, bool cond, int back);
 std::string		MIME_types(std::string	&str);
 std::string		Last_modified(std::string &path);
-int             slash_compare(std::string &cmp, std::string &uri);
-
+std::string	    status_code(int code);
+int		        read_html(std::string path, std::string &body);
 std::string     to_string(int n);
 
 #endif

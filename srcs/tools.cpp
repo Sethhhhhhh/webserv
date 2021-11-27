@@ -101,12 +101,13 @@ std::string	status_code(int code)
 	return "";
 }
 
-int		slash_compare(std::string &cmp, std::string &uri)
+int		read_html(std::string path, std::string &body)
 {
-	if (uri.find(cmp) != std::string::npos)
-	{
-		std::cout << "found : " << cmp << std::endl;
-    	return (cmp.length());
-	}
-	return (0);
+	std::ifstream ifs;
+	std::stringstream ss;
+
+	ifs.open(path.c_str());
+	ss << ifs.rdbuf();
+	body += ss.str();
+	return (ss.str().length());
 }

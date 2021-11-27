@@ -9,6 +9,7 @@ SRCS	=	srcs/main.cpp \
 			class/Client/Client.cpp \
 			class/Config/Config.cpp \
 			class/Config/Location.cpp \
+			class/Response/Response.cpp \
 
 OBJS	=	$(SRCS:.cpp=.o)
 
