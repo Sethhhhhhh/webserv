@@ -30,29 +30,13 @@ Server::~Server(void) {
 	return ;
 }
 
-void Server::respond(int fd, Request &request) {
-	(void)request;
-	std::stringstream ss;
-	std::ifstream ifs;
+void Server::respond(int fd, Request &request) 
+{
+	Response	res(request);
 	std::string  resp;
-	std::string	 file;
-	std::stringstream len;
 
-	file = "pages/test.html";
-	resp = "HTTP/1.1 200 OK\n";
-	resp += "Content-Length: ";
-	ifs.open(file.c_str());
-	ss << ifs.rdbuf();
-	std::cout << ss.str() << std::endl;
-	len << ss.str().length();
-	resp += len.str();
-	resp += "\n";
-	resp += "Content-Type: ";
-	resp += MIME_types(file);
-	resp += "\n\n";
-	resp += ss.str();
-	std::cout << resp << std::endl;
-	send(fd, resp.c_str(), resp.size(), 0);
+	res.print_Response();
+	send(fd, res._raw_response.c_str(), res._raw_response.length(), 0);
 }
 
 /* Get */
@@ -116,7 +100,8 @@ char	Server::set_fd(int fd) {
 	return (0);
 }
 
-char	Server::set_client_max_body_size(unsigned int client_max_body_size) {
+char	Server::set_client_max_body_size(unsigned int client_max_body_size)
+{
 	_client_max_body_size = client_max_body_size;
 	return (0);	
 }

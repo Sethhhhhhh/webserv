@@ -184,7 +184,14 @@ void		Request::parse_config(s_config conf)
 	_conf.names = conf.names;
 	_conf.host = conf.host;
 	_conf.root = (tmp.root != "") ? tmp.root : conf.root;
-	_conf.methods = tmp.methods;
+	if (tmp.methods.size() == 0)
+	{
+		_conf.methods.push_back("GET");
+		_conf.methods.push_back("POST");
+		_conf.methods.push_back("DELETE");
+	}
+	else
+		_conf.methods = tmp.methods;
 	_conf.cgi_extension = tmp.cgi_extension;
 	_conf.index = tmp.index ;
 	_conf.cgi_path = tmp.cgi_path;

@@ -3,6 +3,7 @@
 
 # include "../Connections/Connections.hpp"
 # include "../Request/Request.hpp"
+# include "../Response/Response.hpp"
 
 class Server {
 

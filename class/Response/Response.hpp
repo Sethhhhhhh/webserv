@@ -9,7 +9,6 @@ class Response
 private:
 	
 	Request	&							_req;
-	std::string							_raw_response;
 	std::string							_method;
 	std::string 						_path;
 	std::map<std::string, std::string>	_headers;
@@ -30,7 +29,10 @@ public:
 	void										post_method(void);
 	void										delete_method(void);
 	void										generate_error_page(int);
+	void    									generate_raw_response(void);
 	std::map<std::string, void (Response::*)()>	methods_map(void);
+
+	std::string							_raw_response;
 
 };
 

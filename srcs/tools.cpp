@@ -20,13 +20,14 @@ std::string	cut_line(std::string &str, bool cond, int back)
 }
 
 
-std::string	MIME_types(std::string	&str)
+std::string	MIME_types(std::string	str)
 {
 	std::string ret;
 	std::map<std::string, std::string> mimes;
 
-	ret = str.substr(str.find('.'));
-
+	ret = ".html";
+	//ret = str.substr(str.find('.'));
+	(void)str;
 	mimes[".aac"] = "audio/aac";
 	mimes[".abw"] = "application/x-abiword";
 	mimes[".arc"] = "application/x-freearc";
@@ -101,13 +102,29 @@ std::string	status_code(int code)
 	return "";
 }
 
-int		read_html(std::string path, std::string &body)
+std::string		read_html(std::string path, std::string &body)
 {
 	std::ifstream ifs;
 	std::stringstream ss;
+	std::stringstream ss1;
 
 	ifs.open(path.c_str());
 	ss << ifs.rdbuf();
 	body += ss.str();
-	return (ss.str().length());
+	return (ss.str());
+}
+
+std::string		get_current_time(void)
+{
+	struct timeval tmp;
+	struct tm * timeinfo;
+	char		buffer[1024] = "";
+	
+
+	gettimeofday(&tmp, NULL);
+	tmp.tv_sec = tmp.tv_sec - 3600;
+	timeinfo = localtime(&tmp.tv_sec);
+	strftime(buffer, 1024, "%a, %d %b %Y %T GMT", timeinfo);
+	std::string	ret(buffer);
+	return (ret);
 }
