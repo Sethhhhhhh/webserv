@@ -25,9 +25,7 @@ std::string	MIME_types(std::string	str)
 	std::string ret;
 	std::map<std::string, std::string> mimes;
 
-	ret = ".html";
-	//ret = str.substr(str.find('.'));
-	(void)str;
+	ret = str.substr(str.find('.'));
 	mimes[".aac"] = "audio/aac";
 	mimes[".abw"] = "application/x-abiword";
 	mimes[".arc"] = "application/x-freearc";

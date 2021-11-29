@@ -14,7 +14,7 @@ private:
 	std::map<std::string, std::string>	_headers;
 	std::string							_body;
 	int									_ret_code;
-	std::map<std::string, void (Response::*)()> _methods;
+	std::map<std::string, void (Response::*)(void)> _methods;
 
 
 public:
@@ -30,7 +30,7 @@ public:
 	void										delete_method(void);
 	void										generate_error_page(int);
 	void    									generate_raw_response(void);
-	std::map<std::string, void (Response::*)()>	methods_map(void);
+	std::map<std::string, void (Response::*)(void)>	methods_map(void);
 
 	std::string							_raw_response;
 

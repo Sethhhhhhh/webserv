@@ -35,7 +35,7 @@ void Server::respond(int fd, Request &request)
 	Response	res(request);
 	std::string  resp;
 
-	res.print_Response();
+	std::cout << res._raw_response.c_str() << std::endl;
 	send(fd, res._raw_response.c_str(), res._raw_response.length(), 0);
 }
 

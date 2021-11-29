@@ -11,6 +11,7 @@ Response::Response(Request &req) : _req(req), _path(req._uri), _ret_code(req._re
     else
         _headers["Server: "] = "luigi's mansion";
     _raw_response = req._version + " ";
+    _method = req._method;
     _methods = methods_map();
     init_response();
 }
@@ -38,9 +39,9 @@ Response::~Response()
 {
 }
 
-std::map<std::string, void (Response::*)()>    Response::methods_map(void)
+std::map<std::string, void (Response::*)(void)>    Response::methods_map(void)
 {
-    std::map<std::string, void (Response::*)()>    map;
+    std::map<std::string, void (Response::*)(void)>    map;
 
     map["GET"] = &Response::get_method;
     map["POST"] = &Response::post_method;
@@ -56,17 +57,23 @@ void Response::print_Response(void)
 
 void    Response::init_response(void)
 {
-    _ret_code = 405;
+    if (_ret_code < 400)
+        ((this->*_methods[_method]))();
     if (_ret_code >= 400)
         generate_error_page(_ret_code);
-    else
-        _methods[_method];
     generate_raw_response();
 }
 
 void    Response::generate_raw_response(void)
 {
     _raw_response = "HTTP/1.1 " + status_code(_ret_code) + "\n";
+    if (_body.length() > 0)
+    {
+        std::ostringstream ss;
+
+        ss << _body.length();
+        _headers["Content-Length: "] = ss.str();
+    }
     for (std::map<std::string, std::string>::iterator it = _headers.begin(); it != _headers.end(); it++)
     {
         _raw_response += it->first + it->second + "\n";
@@ -77,7 +84,24 @@ void    Response::generate_raw_response(void)
 
 void    Response::get_method(void)
 {
-    
+    struct stat info;
+
+    if (stat((_req._conf.root + _req._uri).c_str(), &info) == -1)
+        _ret_code = 500;
+    else
+    {
+        if (info.st_mode & S_IRUSR)
+        {
+            read_html(_req._conf.root + _req._uri, _body);
+            if (_body.length() > 0)
+            {
+                _headers["Content-type: "] = MIME_types(_req._conf.root + _req._uri);
+                _ret_code = 200;
+            }
+        }
+        else
+            _ret_code = 403;
+    }
 }
 
 void    Response::post_method(void)
@@ -92,7 +116,6 @@ void    Response::delete_method(void)
 
 void    Response::generate_error_page(int error_code)
 {
-
     if (error_code == 405)
     {
         std::string     methods;
@@ -102,20 +125,14 @@ void    Response::generate_error_page(int error_code)
             if ((it + 1) != _req._conf.methods.end())
                 methods += ", ";
         }
-        std::ostringstream ss;
 
         _headers["Allow: "] = methods;
         read_html(_req._conf.root + _req._conf.error_pages[405], _body);
-        ss << _body.length();
-        _headers["Content-Length: "] = ss.str();
         _headers["Content-type: "] = MIME_types(_req._conf.error_pages[405]);
     }
-    if (error_code == 413)
+    if (error_code == 413 || error_code == 403)
     {
-        std::ostringstream ss;
-        read_html(_req._conf.root + _req._conf.error_pages[413], _body);
-        ss << _body.length();
-        _headers["Content-Length: "] = ss.str();
-        _headers["Content-type: "] = MIME_types(_req._conf.error_pages[413]);
+        read_html(_req._conf.root + _req._conf.error_pages[error_code], _body);
+        _headers["Content-type: "] = MIME_types(_req._conf.error_pages[error_code]);
     }
 }
