@@ -1,5 +1,5 @@
-#include "../class/Connections/Connections.hpp"
-#include "../includes/webserv.hpp"
+#include "Connections.hpp"
+#include "webserv.hpp"
 
 int	main(int ac, char **av)
 {

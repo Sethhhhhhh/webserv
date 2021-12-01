@@ -1,4 +1,4 @@
-#include "../class/Config/Config.hpp"
+#include "Config.hpp"
 
 size_t	count_char_in_string(std::string & s, char c) {
 	size_t	count;

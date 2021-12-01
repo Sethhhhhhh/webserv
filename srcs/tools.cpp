@@ -1,4 +1,4 @@
-#include "../includes/webserv.hpp"
+#include "webserv.hpp"
 
 std::string	to_string(int n) {
 	std::string 		str;
@@ -25,7 +25,10 @@ std::string	MIME_types(std::string	str)
 	std::string ret;
 	std::map<std::string, std::string> mimes;
 
-	ret = str.substr(str.find('.'));
+	if (str.length() > 0)
+		ret = str.substr(str.find('.'));
+	else
+		ret = ".html";
 	mimes[".aac"] = "audio/aac";
 	mimes[".abw"] = "application/x-abiword";
 	mimes[".arc"] = "application/x-freearc";
