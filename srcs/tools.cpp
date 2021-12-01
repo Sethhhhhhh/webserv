@@ -53,12 +53,20 @@ std::string	MIME_types(std::string	str)
 	return (mimes[ret]);
 }
 
-std::string	Last_modified(std::string &path)
+std::string	Last_modified(std::string path)
 {
 	struct stat	ret;
+	char		buffer[1024] = "";
+	struct tm * timeinfo;
 
 	if (stat(path.c_str(), &ret) == 0)
-		return (ctime(&ret.TIME.tv_sec));
+	{
+		ret.TIME.tv_sec = ret.TIME.tv_sec - 3600;
+		timeinfo = localtime(&ret.TIME.tv_sec);
+		strftime(buffer, 1024, "%a, %d %b %Y %T GMT", timeinfo);
+		std::string	time_string(buffer);
+		return (time_string);
+	}
 	return ("");
 }
 

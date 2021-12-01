@@ -2,14 +2,14 @@
 
 Response::Response(Request &req) : _req(req), _path(req._uri), _ret_code(req._ret_code)
 {
-    
     if (req._body.length() > req._conf.client_max_body_size)
         _ret_code = 413;
-    _headers["Content-Language: "] = req._lan;
+    _headers["Content-Language: "] = (req._lan.length() > 0) ? req._lan : "fr,en-USen";
     if (req._conf.names.size() > 0)
         _headers["Server: "] = req._conf.names[0];
     else
         _headers["Server: "] = "luigi's mansion";
+    _headers["Host: "] = req._conf.host;
     _raw_response = req._version + " ";
     _method = req._method;
     _methods = methods_map();
@@ -86,8 +86,19 @@ void    Response::get_method(void)
 {
     struct stat info;
 
+    if (_req._uri == _req._conf.path)
+    {
+        for (std::vector<std::string>::iterator it = _req._conf.index.begin(); it != _req._conf.index.end(); it++)
+        {
+            if ((*it).length() > 0)
+            {
+                _req._uri += *it;
+                break;
+            }
+        }
+    }
     if (stat((_req._conf.root + _req._uri).c_str(), &info) == -1)
-        _ret_code = 500;
+        _ret_code = 404;
     else
     {
         if (info.st_mode & S_IRUSR)
@@ -96,8 +107,11 @@ void    Response::get_method(void)
             if (_body.length() > 0)
             {
                 _headers["Content-type: "] = MIME_types(_req._conf.root + _req._uri);
+                _headers["Last-Modified: "] = Last_modified(_req._conf.root + _req._uri);
                 _ret_code = 200;
             }
+            else
+                _ret_code = 204;
         }
         else
             _ret_code = 403;
@@ -111,7 +125,20 @@ void    Response::post_method(void)
 
 void    Response::delete_method(void)
 {
-    
+    struct stat info;
+
+    if (stat((_req._conf.root + _req._uri).c_str(), &info) == -1)
+        _ret_code = 404;
+    else
+    {
+        if (info.st_mode & S_IRUSR)
+        {
+            remove((_req._conf.root + _req._uri).c_str());
+            _ret_code = 204;
+        }
+        else
+            _ret_code = 403;
+    }
 }
 
 void    Response::generate_error_page(int error_code)
@@ -130,7 +157,7 @@ void    Response::generate_error_page(int error_code)
         read_html(_req._conf.root + _req._conf.error_pages[405], _body);
         _headers["Content-type: "] = MIME_types(_req._conf.error_pages[405]);
     }
-    if (error_code == 413 || error_code == 403)
+    else
     {
         read_html(_req._conf.root + _req._conf.error_pages[error_code], _body);
         _headers["Content-type: "] = MIME_types(_req._conf.error_pages[error_code]);

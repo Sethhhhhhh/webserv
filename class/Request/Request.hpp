@@ -8,6 +8,7 @@ struct	s_request_config
 	std::map<int, std::string>					error_pages;
 	std::vector<std::string>					names;
 	std::string									host;
+	std::string									path;
 	std::string									root;
 	std::vector<std::string>					methods;
 	std::vector<std::string>					cgi_extension;

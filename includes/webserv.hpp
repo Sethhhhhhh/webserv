@@ -75,7 +75,7 @@ void	        remove_extra_space(std::string & str, size_t pos);
 
 std::string		cut_line(std::string &str, bool cond, int back);
 std::string		MIME_types(std::string	str);
-std::string		Last_modified(std::string &path);
+std::string		Last_modified(std::string path);
 std::string	    status_code(int code);
 std::string     read_html(std::string path, std::string &body);
 std::string     to_string(int n);

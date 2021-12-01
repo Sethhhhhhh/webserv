@@ -15,6 +15,7 @@ Request& Request::operator=(const Request &c)
 	if (this != &c)
 	{
 		_raw_request = c._raw_request;
+		_conf = c._conf;
 		_status = c._status;
 		_method = c._method;
 		_version = c._version;
@@ -180,6 +181,7 @@ void		Request::parse_config(s_config conf)
 		}
 	}
 	_conf.error_pages = tmp.error_pages;
+	_conf.path = tmp.path;
 	_conf.error_pages.insert(conf.error_pages.begin(), conf.error_pages.end());
 	_conf.names = conf.names;
 	_conf.host = conf.host;

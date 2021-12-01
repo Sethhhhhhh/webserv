@@ -46,6 +46,7 @@ void 	Client::receive_request(void)
 	buffer[ret] = 0;
 	_received_request += buffer;
 	_bytes_request += ret;
+	std::cout << "Raw Request:\n" << _received_request << std::endl;
 	if (buffer[ret-1] == '\n')
 	{
 		_ready_request = true;
