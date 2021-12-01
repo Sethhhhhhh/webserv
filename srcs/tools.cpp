@@ -137,3 +137,9 @@ std::string		get_current_time(void)
 	std::string	ret(buffer);
 	return (ret);
 }
+
+int				error_msg(const char *msg)
+{
+	std::cerr << RED << "Error: " << msg << DFL << std::endl;
+	return EXIT_FAILURE;
+}

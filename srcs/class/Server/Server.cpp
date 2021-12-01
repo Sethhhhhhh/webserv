@@ -108,12 +108,12 @@ char	Server::set_client_max_body_size(unsigned int client_max_body_size)
 
 /* Usuful func */
 void	Server::print(void) {
-	std::cout << "----------------------------------" << std::endl << "- SERVER INFORMATIONS -" << std::endl;
+	TITLE(BLUE, " ------ SERVER INFORMATIONS -------");
 
 	/* NAMES */
-	std::cout << "server_names: ";
+	INFO(BLUE, "server_names", "", "");
 	for (std::vector<std::string>::iterator it = _names.begin(); it !=_names.end(); it++) {
-		std::cout << *it;
+		std::cout << YELLOW << *it;
 		if (it != _names.end() - 1)
 			std::cout << ", ";
 		else
@@ -121,68 +121,51 @@ void	Server::print(void) {
 	}
 
 	/* ERROR PAGES */
-	std::cout << "error_pages: ";
+	INFO(BLUE, "error_pages", "", "");
 	for (std::map<int, std::string>::iterator it = _error_pages.begin(); it != _error_pages.end(); it++) {
-		std::cout << "[" << it->first << "]" << it->second << ", ";
+		std::cout << "[" << it->first << "] --> " << it->second << std::endl;
 	}
-	std::cout << std::endl;
-
-	/* HOST */
-	std::cout << "host: " << _host << std::endl;
-
-	/* PORT */	
-	std::cout << "port: " << _port << std::endl;
-
-	/* ROOT */
-	std::cout << "root: " << (_root.empty() ? "null" : _root) << std::endl;
-
-	/* CLIENT MAX BODY SIZE */
-	std::cout << "client_max_body_size: " << _client_max_body_size << std::endl;
+	INFO(BLUE, "host", YELLOW, _host);
+	INFO(BLUE, "port", YELLOW, _port);
+	INFO(BLUE, "root", YELLOW, (_root.empty() ? "null" : _root));
+	INFO(BLUE, "client_max_body_size", YELLOW, _client_max_body_size);
 
 	/* LOCATION(S) */
-	std::cout << std::endl << "- LOCATIONS -" << std::endl;
-
+	SPACE TITLE(BLUE, " -----------  LOCATIONS -----------");
 	for (std::vector<struct s_location>::iterator it = _locations.begin(); it != _locations.end(); it++) {
-		std::cout << std::endl;
-		std::cout << "path: " << it->path << std::endl;
-		std::cout << "root: " << (it->root.empty() ? "null" : it->root) << std::endl;
-		std::cout << "cgi_path: " << (it->cgi_path.empty() ? "null" : it->cgi_path) << std::endl;
-		std::cout << "upload_path: " << (it->upload_path.empty() ? "null" : it->upload_path) << std::endl;
-		std::cout << "auth_basic_user_file: " << (it->auth_basic_user_file.empty() ? "null" : it->auth_basic_user_file) << std::endl;
-		std::cout << "auth_basic: " << (it->auth_basic.empty() ? "null" : it->auth_basic) << std::endl;
-		std::cout << "client_max_body_size: " << it->client_max_body_size << std::endl;
-		std::cout << std::boolalpha << "upload_eanable: " << it->upload_eanable << std::endl;
-		std::cout << std::boolalpha << "autoindex: " << it->autoindex << std::endl;
+		std::cout  << std::boolalpha << std::endl;
+		INFO(BLUE, "path", YELLOW, it->path);
+		INFO(BLUE, "root", YELLOW, (it->root.empty() ? "null" : it->root));
+		INFO(BLUE, "cgi_path", YELLOW, (it->cgi_path.empty() ? "null" : it->cgi_path));
+		INFO(BLUE, "upload_path", YELLOW, (it->upload_path.empty() ? "null" : it->upload_path));
+		INFO(BLUE, "auth_basic_user_file", YELLOW, (it->auth_basic_user_file.empty() ? "null" : it->auth_basic_user_file));
+		INFO(BLUE, "auth_basic", YELLOW, (it->auth_basic.empty() ? "null" : it->auth_basic));
+		INFO(BLUE, "client_max_body_size", YELLOW, it->client_max_body_size);
+		INFO(BLUE, "upload_eanable", YELLOW, it->upload_eanable);
+		INFO(BLUE, "autoindex", YELLOW, it->autoindex);
 
-		std::cout << "methods: ";
+		/* METHODES */
+		INFO(BLUE, "methods", "", "");
 		for (std::vector<std::string>::iterator m = it->methods.begin(); m != it->methods.end(); m++) {
-			std::cout << *m;
-			if (m != it->methods.end() - 1)
-				std::cout << ", ";
-		}
-		std::cout << std::endl;
+			std::cout << *m << ", ";
+		}	SPACE
 
-		std::cout << "cgi_extension: ";
+		/* CGI EXTENSION */
+		INFO(BLUE, "cgi_extension", "", "");
 		for (std::vector<std::string>::iterator m = it->cgi_extension.begin(); m != it->cgi_extension.end(); m++) {
-			std::cout << *m;
-			if (m != it->cgi_extension.end() - 1)
-				std::cout << ", ";
-		}
-		std::cout << std::endl;
+			std::cout << *m << ", ";
+		}	SPACE
 
-		std::cout << "index: ";
+		/* INDEX PAGES */
+		INFO(BLUE, "index", "", "");
 		for (std::vector<std::string>::iterator m = it->index.begin(); m != it->index.end(); m++) {
-			std::cout << *m;
-			if (m != it->index.end() - 1)
-				std::cout << ", ";
-		}
-		std::cout << std::endl;
-	
-		std::cout << "error_pages: ";
+			std::cout << *m << ", ";
+		}	SPACE
+
+		/* ERROR PAGES */
+		INFO(BLUE, "error_pages", "", "");
 		for (std::map<int, std::string>::iterator m = it->error_pages.begin(); m != it->error_pages.end(); m++) {
-			std::cout << "[" << m->first << "]" << m->second << ", ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl << std::endl;
+			std::cout << "[" << m->first << "]" << m->second << std::endl;
+		}	SPACE std::cout << LINE;
+	}	SPACE
 }

@@ -22,15 +22,43 @@
 # include <sstream>
 # include <fstream>
 
-#ifndef __APPLE__
+# ifndef __APPLE__
 
-#define	TIME	st_mtim
+#  define	TIME	st_mtim
+/* ********************************************* */
+/*	     COLOR FOR BETTER TEXT INFORMATION:		 */
+/*	- ATTENTION: FOR MAC OS						 */
+/* ********************************************* */
+#  define DFL	 "\e[0;39m"
+#  define RED	 "\e[0;31m"
+#  define GREEN	 "\e[0;32m"
+#  define YELLOW "\e[0;33m"
+#  define BLUE	 "\e[0;34m"
+# else
+#  define TIME	st_mtimespec
+/* ********************************************* */
+/*	     COLOR FOR BETTER TEXT INFORMATION:		 */
+/*	- ATTENTION: FOR LINUX						 */
+/* ********************************************* */
+#  define DFL	 "\033[39m"
+#  define RED	 "\033[31m"
+#  define GREEN	 "\033[32m"
+#  define YELLOW "\033[33m"
+#  define BLUE	 "\033[34m"
+# endif
 
-#else
+/* ********************************************* */
+/*	    	DEFINE FOR BETTER CODE:				 */
+/* ********************************************* */
+# define ERR_ARG "No config file found."
+/* ********************************************* */
+# define SPACE std::cout << std::endl;
+# define LINE	" ---------------------------------- " << std::endl
+# define MSG(color, msg) std::cout << color << msg << DFL << std::endl
+# define INFO(color, type, color2, value) std::cout << color << type << ": " << color2 << value << std::endl << DFL
+# define TITLE(color, title)	std::cout << LINE << color << title << std::endl << DFL << LINE
+/* ********************************************* */
 
-#define	TIME	st_mtimespec
-
-#endif
 
 /* Location struct */
 struct	s_location {
@@ -80,5 +108,7 @@ std::string	    status_code(int code);
 std::string     read_html(std::string path, std::string &body);
 std::string     to_string(int n);
 std::string		get_current_time(void);
+
+int				error_msg(const char *msg);
 
 #endif

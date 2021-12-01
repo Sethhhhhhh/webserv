@@ -227,6 +227,7 @@ void		Request::parse(std::string str, s_config conf)
 	}
 	while (_status == Request::HEADERS && line.find(":") != std::string::npos)
 	{
+		// ATTENTION POTENSIELLE SEGFAULT SUBSTR NULL ? 
 		key = line.substr(0, line.find(":"));
 		value = line.substr(line.find(":") + 2);
 		_headers[key] = value;
@@ -242,50 +243,59 @@ void		Request::parse(std::string str, s_config conf)
 	print_request();
 }
 
-
 void	Request::print_request(void)
 {
-	std::cout << "method : " << _method << std::endl;
-	std::cout << "URI : " << _uri << std::endl;
-	std::cout << "version : " << _version << std::endl;
-	std::cout << "languages : " << _lan << std::endl;
-	std::cout << "headers :" << std::endl;
+	TITLE(YELLOW, " -----         REQUEST        ----- ");
+	INFO(BLUE, "method", YELLOW, _method);
+	INFO(BLUE, "URI", YELLOW, _uri);
+	INFO(BLUE, "version", YELLOW, _version);
+	INFO(BLUE, "languages", YELLOW, _lan);
+
+	/* HEADER */
+	SPACE MSG(BLUE, " -----  HEADER  -----");
 	std::map<std::string, std::string>::iterator it = _headers.begin();
 	for (; it != _headers.end(); ++it)
-	{
 		std::cout << it->first << " : " << it->second << std::endl;
-	}
-	std::cout << "body :\n" << std::endl;
-	std::cout << _body << std::endl;
+		
+	/* BODY */
+	SPACE MSG(BLUE, " -----   BODY   -----");
+	// MSG(YELLOW, _body); ?? il est print ou le BODY en vrai ? 
 }
 
 void	Request::print_config(void)
 {
-	std::cout << "REQUEST CONFIG\n#######" << std::endl;
-	std::cout << "error pages : ";
+	TITLE(YELLOW, " -----     REQUEST CONFIG     ----- ");
+
+	MSG(BLUE, "error pages:");
 	for (std::map<int, std::string>::iterator it = _conf.error_pages.begin(); it != _conf.error_pages.end(); it++)
 		std::cout << it->first << " " << it->second << std::endl;
-	std::cout << "names : ";
+
+	MSG(BLUE, "names:");
 	for (std::vector<std::string>::iterator it = _conf.names.begin(); it != _conf.names.end(); it++)
-		std::cout << *it << " ";
-	std::cout << "\nhost : " << _conf.host << std::endl;
-	std::cout << "root : " << _conf.root << std::endl;
-	std::cout << "methods : ";
-	
+		std::cout << YELLOW << *it << " ";
+
+	SPACE INFO(BLUE, "host", YELLOW, _conf.host);
+	INFO(BLUE, "root", YELLOW, _conf.root);
+
+	MSG(BLUE, "methods:");
 	for (std::vector<std::string>::iterator it = _conf.methods.begin(); it != _conf.methods.end(); it++)
 		std::cout << *it << " ";
-	std::cout << "\ncgi extension  ";
+
+	SPACE MSG(BLUE, "cgi extension:");
 	for (std::vector<std::string>::iterator it = _conf.cgi_extension.begin(); it != _conf.cgi_extension.end(); it++)
 		std::cout << *it << " ";
-	std::cout << "\ncgi path " << _conf.cgi_path  << std::endl;
-	std::cout << "index : ";
+
+	SPACE INFO(BLUE, "cgi path", YELLOW, _conf.cgi_path);
+
+	MSG(BLUE, "index:");
 	for (std::vector<std::string>::iterator it = _conf.index.begin(); it != _conf.index.end(); it++)
-		std::cout << *it << " ";
-	std::cout << "upload_path " << _conf.upload_path << std::endl;
-	std::cout << "auth_basic_user_file " << _conf.auth_basic_user_file << std::endl;
-	std::cout << "auth_basic " << _conf.auth_basic << std::endl;
-	std::cout << "upload_eanable " << _conf.upload_eanable << std::endl;
-	std::cout << "auto index " <<std::boolalpha << 	_conf.autoindex << std::endl;
-	std::cout << "client body size " << _conf.client_max_body_size << std::endl;
-	std::cout << "##########" << std::endl;
+		std::cout << *it << ", ";
+
+	INFO(BLUE, "upload_path", YELLOW, _conf.upload_path);
+	INFO(BLUE, "auth_basic_user_file", YELLOW, _conf.auth_basic_user_file);
+	INFO(BLUE, "auth_basic", YELLOW, _conf.auth_basic);
+	INFO(BLUE, "upload_eanable", YELLOW, _conf.upload_eanable);
+	INFO(BLUE, "auto index", YELLOW, _conf.autoindex);
+	INFO(BLUE, "client body size", YELLOW, _conf.client_max_body_size);
+	SPACE
 } 

@@ -40,7 +40,7 @@ int Connections::init() {
 		}
 		addr.sin_addr.s_addr = inet_addr((server)->get_host().c_str());
 		addr.sin_port = htons((server)->get_port());
-		std::cout << (server)->get_port() << std::endl;
+		INFO(BLUE, "OPEN PORT", GREEN, (server)->get_port());
 		if (bind(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
 		{
 			servers.erase(server);
@@ -75,10 +75,9 @@ int Connections::add_client(Server &server) {
 	ready_fd--;
 	if (servers.size() + clients.size() < FD_SETSIZE)
 	{
-		fd = accept(server.get_fd(), 0, 0);
-		if (fd == -1)
+		if ((fd = accept(server.get_fd(), 0, 0)) == -1)
 			return -1;
-		std::cout << "Connection accepted." << std::endl;
+		MSG(GREEN, " ------ Connection Accepted ----- ");
 		FD_SET(fd, &active_set);
 		fd_list.push_back(fd);
 		max_fd = *std::max_element(fd_list.begin(), fd_list.end());
@@ -86,10 +85,7 @@ int Connections::add_client(Server &server) {
 		clients.push_back(new_client);
 	}
 	else
-	{
-		std::cerr << "Error. Max connections reached." << std::endl;
-		return -1;
-	}
+		return (error_msg("Max connections reached"));
 	return 0;
 }
 
@@ -120,8 +116,9 @@ int Connections::check_clients() {
 	return 0;
 }
 
-void	Connections::loop(void) {
-	std::cout << "Waiting for connection." << std::endl;
+void	Connections::loop(void) 
+{
+	MSG(YELLOW, " ----- Waiting for connection -----");
 	while (1)
 	{
 		ready_rset = active_set;
