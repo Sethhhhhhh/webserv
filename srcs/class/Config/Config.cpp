@@ -133,6 +133,8 @@ char	Config::set_client_max_body_size(std::string &content, int line_count) {
 }
 
 char	Config::set_root(std::string &content, int line_count) {
+	char	tmp[256];
+
 	content.erase(0, 4);
 	remove_extra_space(content, 0);
 	if (content.substr(0, content.size() - 1).empty())
@@ -143,7 +145,8 @@ char	Config::set_root(std::string &content, int line_count) {
 	
 	if (content[0] != '/')
 		throw Error("Only absolute path accepted.", line_count);
-	server->set_root(content.substr(0, content.length() - 1));
+	getcwd(tmp, 256);
+	server->set_root(tmp + content.substr(0, content.length() - 1));
 	content.erase();
 	return (0);
 }
