@@ -154,7 +154,21 @@ void    Response::get_method(void)
 
 void    Response::post_method(void)
 {
+    std::ofstream                fd;
 
+    if (file_status(_req._conf.root + _req._uri) == 200)
+        _ret_code = 200;
+    else
+    {
+        fd.open((_req._conf.root + _req._uri).c_str(), std::ofstream::out);
+        if (file_status(_req._conf.root + _req._uri) != 200)
+            _ret_code = 403;
+        else
+        {
+            _ret_code = 201;
+            fd << _req._body;
+        }
+    }
 }
 
 void    Response::delete_method(void)

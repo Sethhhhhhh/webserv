@@ -143,3 +143,17 @@ int				error_msg(const char *msg)
 	std::cerr << RED << "Error: " << msg << DFL << std::endl;
 	return EXIT_FAILURE;
 }
+
+int				file_status(std::string		path)
+{
+    struct stat             s;
+
+    if (stat(path.c_str(), &s) == 0 )
+    {
+        if (s.st_mode & S_IFREG)
+            return (200);
+        else
+            return (403);
+    }
+	return (404);
+}
