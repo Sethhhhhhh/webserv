@@ -64,6 +64,33 @@ void    Response::init_response(void)
     generate_raw_response();
 }
 
+void    Response::generate_index(void)
+{
+    DIR				*dp;
+	struct dirent   *dirp;
+
+    //https://www.delftstack.com/howto/c/opendir-in-c/
+	dp = opendir((_req._conf.root + _req._uri).c_str());
+    if (dp == NULL)
+        _ret_code = 500;
+    _body = "<html>\n<body>\n";
+    _body += "<h2>directory listing :</h2>\n";
+	while ((dirp = readdir(dp)) != NULL)
+	{
+		_body += "<a href=\"" + _req._uri;
+		if (_req._uri[_req._uri.length() - 1] != '/')
+			_body += '/';
+		_body += dirp ->d_name;
+		_body += "\">";
+		_body += dirp ->d_name;
+		_body += "</a>";
+        _body += "<br>\n";
+	}
+    _body += "</body>\n</html>\n";
+    _headers["Content-type: "] = MIME_types(".html");
+	closedir(dp);
+}
+
 void    Response::generate_raw_response(void)
 {
     _raw_response = "HTTP/1.1 " + status_code(_ret_code) + "\n";
@@ -86,8 +113,15 @@ void    Response::get_method(void)
 {
     struct stat info;
 
+    if (_req._conf.autoindex && _req._uri[_req._uri.length() - 1] == '/' && _req._conf.index.size() <= 1)
+    {
+        generate_index();
+        _ret_code = 200;
+        return ;
+    }
     if (_req._uri == _req._conf.path)
     {
+        
         for (std::vector<std::string>::iterator it = _req._conf.index.begin(); it != _req._conf.index.end(); it++)
         {
             if ((*it).length() > 0)

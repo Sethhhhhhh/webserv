@@ -30,6 +30,7 @@ public:
 	void										delete_method(void);
 	void										generate_error_page(int);
 	void    									generate_raw_response(void);
+	void										generate_index(void);
 	std::map<std::string, void (Response::*)(void)>	methods_map(void);
 
 	std::string							_raw_response;
