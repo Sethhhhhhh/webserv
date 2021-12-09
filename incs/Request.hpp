@@ -52,7 +52,19 @@ class Request {
 		void	parse_chunked_body(void);
 		void	parse_language(void);
 		void	print_config(void);
-		
+
+		std::string							get_raw_request(void) const {return _raw_request;}
+		int									get_status(void) const {return _status;}
+		std::string							get_method(void) const {return _method;}
+		std::string							get_version(void) const {return _version;}
+		std::string							get_uri(void) const {return _uri;}
+		std::map<std::string, std::string>	get_headers(void) const {return _headers;}
+		std::string							get_body(void) const {return _body;}
+		std::string							get_lan(void) const {return _lan;}
+		int									get_ret_code(void) const {return _ret_code;}
+		t_chunk								get_chunk(void) const {return _chunk;}
+		s_request_config					get_conf(void) const {return _conf;}
+
 
 		enum         status
 		{

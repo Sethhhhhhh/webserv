@@ -14,6 +14,7 @@ SRCS	=	main.cpp \
 			Config.cpp \
 			Location.cpp \
 			Response.cpp \
+			Cgi.cpp \
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:%.cpp=%.o))
 
