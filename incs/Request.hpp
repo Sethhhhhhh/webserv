@@ -20,6 +20,7 @@ struct	s_request_config
     bool										upload_eanable;
     bool										autoindex;
     size_t										client_max_body_size;
+	unsigned int								port;
 };
 
 class Request {

@@ -113,6 +113,8 @@ void    Response::get_method(void)
 {
     struct stat info;
 
+    Cgi  cgi(*this);
+
     if (_req._conf.autoindex && _req._uri[_req._uri.length() - 1] == '/' && _req._conf.index.size() <= 1)
     {
         generate_index();

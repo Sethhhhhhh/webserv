@@ -203,6 +203,7 @@ void		Request::parse_config(s_config conf)
 	_conf.upload_eanable = tmp.upload_eanable;
 	_conf.autoindex = tmp.autoindex;
 	_conf.client_max_body_size = tmp.client_max_body_size;
+	_conf.port = conf.port;
 }
 
 void		Request::parse(std::string str, s_config conf)
