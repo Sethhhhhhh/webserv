@@ -114,4 +114,6 @@ int				file_status(std::string path);
 
 int				error_msg(const char *msg);
 
+std::string	    to_string(int n);
+
 #endif
