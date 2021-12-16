@@ -38,6 +38,37 @@ void	Client::wait_response(void)
 }
 
 
+/*
+
+CAS 1 -> Non Chunked
+	Si content_lenght -> 
+	- Lire jusqua content len = bytes receive 
+	
+	( doit keep le bytes reveive )
+
+	je parse
+
+
+CAS 2 ->  Chunked   Transfere encoding .. lecture until = 0\r\n\r\n
+
+	TANT QUE
+		charger le buffer jusqu'a end.
+
+	je parse
+
+CAS 3 -> Pas de Body
+	- tout d'un coup
+
+	je parse
+
+
+RECV = -1 
+error, on doit gere ce cas propremement
+
+
+
+*/
+
 void 	Client::receive_request(void)
 {
 	char buffer[2024];
@@ -45,21 +76,53 @@ void 	Client::receive_request(void)
 
 	// recv peut retourner -1, 0
 
+	// while (_request.get_status() != Request::DONE)
 
-	INFO(RED, _request.get_status(), NULL, NULL);
-	while (_request.get_status() != Request::DONE)
+		// std::cout << "current req stat " << _request.get_status() << std::endl;
+
+	while (1)
 	{
-		std::cout << "current req stat " << _request.get_status() << std::endl;
+		bzero(buffer, 2024);
 		ret = recv(_fd, buffer, 2024, 0);
+		if (ret == -1)
+			exit(6);
 		buffer[ret] = 0;
 		_received_request += buffer;
 		_bytes_request += ret;
 
-		
+		std::cout << _received_request << std::endl;
 
-		_request.parse(_received_request, _server->get_config());
+		if (_received_request.find("\r\n\r\n") != std::string::npos) // HEADER FINI
+		{
+			if (_received_request.find("Content-Length") != std::string::npos)
+			{
+				u_long len_content = atoi(_received_request.substr(_received_request.find("Content-Length:") + 16).substr(0, _received_request.substr(_received_request.find("Content-Length:") + 16).find("\n")).c_str());
+
+				if ((u_long)_bytes_request - _received_request.find("\r\n\r\n") >= len_content)
+				{
+					std::cout << "BREAK RECEIVED" << std::endl;
+					break ;
+				}
+			}
+			else if (_received_request.find("Transfer-Encoding") != std::string::npos)
+			{
+				if (_received_request.find("0\r\n\r\n") != std::string::npos)
+				{
+					std::cout << "BREAK PARTITION" << std::endl;
+					break ;
+				}
+			}
+			else
+				break ;
+		}
+		else
+			break ;
+		//std::cout << "after" << std::endl;
 	}
-
+	std::cout << _received_request << std::endl;
+	std::cout << _bytes_request << std::endl;
+	_request.parse(_received_request, _server->get_config());
+	_ready_request = true;
 }
 
 bool		Client::request_is_ready(void)
