@@ -93,6 +93,7 @@ void    Response::generate_index(void)
 
 void    Response::generate_raw_response(void)
 {
+
     _raw_response = "HTTP/1.1 " + status_code(_ret_code) + "\n";
     if (_body.length() > 0)
     {
@@ -113,6 +114,7 @@ void    Response::get_method(void)
 {
     struct stat info;
 
+    Cgi  cgi(this->get_request());
     if (_req._conf.autoindex && _req._uri[_req._uri.length() - 1] == '/' && _req._conf.index.size() <= 1)
     {
         generate_index();
@@ -142,6 +144,7 @@ void    Response::get_method(void)
             {
                 _headers["Content-type: "] = MIME_types(_req._conf.root + _req._uri);
                 _headers["Last-Modified: "] = Last_modified(_req._conf.root + _req._uri);
+                
                 _ret_code = 200;
             }
             else
@@ -150,13 +153,13 @@ void    Response::get_method(void)
         else
             _ret_code = 403;
     }
-    Cgi  cgi(*this);
 }
 
 void    Response::post_method(void)
 {
     std::ofstream                fd;
 
+    Cgi  cgi(this->get_request());
     if (file_status(_req._conf.root + _req._uri) == 200)
         _ret_code = 200;
     else
@@ -179,7 +182,7 @@ void    Response::delete_method(void)
     if (stat((_req._conf.root + _req._uri).c_str(), &info) == -1)
         _ret_code = 404;
     else
-    {
+   {
         if (info.st_mode & S_IRUSR)
         {
             remove((_req._conf.root + _req._uri).c_str());

@@ -1,8 +1,7 @@
 #include "Cgi.hpp"
 
-Cgi::Cgi(Response &response) {
-	_init_envs(response);
-	execute();
+Cgi::Cgi(Request &request) {
+	_init_envs(request);
 	return ;
 }
 
@@ -12,16 +11,14 @@ char    **Cgi::_map_to_table_char(std::map<std::string, std::string> map) {
 	size_t      j;
 
 	j = 0;
-	std::cout << "--------------" << std::endl;
-	envs_char = new char*[map.size()];
+	envs_char = new char*[map.size() + 1];
 	for (std::map<std::string, std::string>::iterator i = map.begin(); i != map.end(); i++) {
 		s = i->first + "=" + i->second;
 		envs_char[j] = new char[s.size()];
 		envs_char[j] = strdup(s.c_str());
-		std::cout << envs_char[j] << std::endl;
 		j++;
 	}
-	std::cout << "--------------" << std::endl;
+	envs_char[j] = 0;
 	return (envs_char);
 }
 
@@ -35,26 +32,25 @@ std::string	Cgi::_get_query_string(std::string uri) {
 	return (query);
 }
 
-void	Cgi::_init_envs(Response &response) {
+void	Cgi::_init_envs(Request &request) {
 	std::map<std::string, std::string>	envs;
 
 	envs["REDIRECT_STATUS"] = "200";
 	envs["SERVER_PROTOCOL"] = "HTTP/1.1";
-	envs["PATH_INFO"] = response.get_path();
-	envs["CONTENT_LENGTH"] = response.get_headers()["Content-length: "];
-	envs["CONTENT_TYPE"] = response.get_headers()["Content-type: "];
+	envs["PATH_INFO"] = request.get_conf().path;
+	envs["CONTENT_LENGTH"] = request.get_headers()["Content-length"];
+	envs["CONTENT_TYPE"] = request.get_headers()["Content-type"];
 	envs["GATEWAY_INTERFACE"] = "CGI/1.1";
-	envs["PATH_TRANSLATED"] = response.get_path();
-	envs["QUERY_STRING"] = _get_query_string(response.get_request().get_uri());
+	envs["PATH_TRANSLATED"] = request.get_conf().path;
+	envs["QUERY_STRING"] = _get_query_string(request.get_uri());
 	envs["REMOTE_ADDR"] = "";
 	envs["REMOTE_HOST"] = "";
 	envs["REMOTE_IDENT"] = "";
 	envs["REMOTE_USER"] = "";
-	envs["REQUEST_METHOD"] = response.get_methodd();
-	envs["SERVER_PORT"] = to_string(response.get_request().get_conf().port);
+	envs["REQUEST_METHOD"] = request.get_method();
+	envs["SERVER_PORT"] = to_string(request.get_conf().port);
 	envs["SERVER_SOFTWARE"] = "Webserv";
-	envs["SERVER_NAME"] = response.get_request().get_conf().host;
-	
+	envs["SERVER_NAME"] = request.get_conf().host;
 
 	_envs = _map_to_table_char(envs);
 }
@@ -74,8 +70,7 @@ std::string	Cgi::_read_file(std::string path) {
 	return (s);
 }
 
-std::string	Cgi::execute(void) {
-	char * const 	*args = NULL;
+std::string	Cgi::execute(Request &request) {
 	pid_t   		pid;
 	int				status;
 	int				ret_fd;
@@ -91,23 +86,28 @@ std::string	Cgi::execute(void) {
 		close(fds[1]);
 		dup2(fds[0], 0);
 	
-		ret_fd = open("/tmp/webserv_cgi", O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-		std::cout << "ok" << std::endl;
+		ret_fd = open("webserv_cgi", O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
 
 		dup2(ret_fd, 1);
-		execve("ubuntu_cgi_tester", args, _envs);
-	
+		dup2(ret_fd, 2);
+
+		char	cwd[256];
+		getcwd(cwd, 256);
+
+		std::string	scwd = std::string(cwd + request.get_conf().cgi_path);
+
+		std::cout << execve(scwd.c_str(), NULL, _envs) << std::endl;
 		close(ret_fd);
 		close(fds[0]);
 
 		exit(0);
 	}
 	close(fds[0]);
-	// write(fds[1], )
+	write(fds[1], request.get_body().c_str(), request.get_body().length());
 	close(fds[1]);
 	wait(&status); 
 
-	return (_read_file("/tmp/webserv_cgi"));
+	return (_read_file("webserv_cgi"));
 }
 
 Cgi::~Cgi(void) {
