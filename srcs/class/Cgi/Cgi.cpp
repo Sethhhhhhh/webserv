@@ -2,6 +2,7 @@
 
 Cgi::Cgi(Request &request) {
 	_init_envs(request);
+	execute(request);
 	return ;
 }
 
@@ -51,6 +52,19 @@ void	Cgi::_init_envs(Request &request) {
 	envs["SERVER_PORT"] = to_string(request.get_conf().port);
 	envs["SERVER_SOFTWARE"] = "Webserv";
 	envs["SERVER_NAME"] = request.get_conf().host;
+	std::map<std::string, std::string>	headers = request.get_headers();
+	for (std::map<std::string, std::string>::iterator i = headers.begin(); i != headers.end(); i++) {
+		std::string	tmp = i->first;
+		size_t pos = tmp.find_first_of("-");
+		while (pos != std::string::npos) {
+			tmp.replace(pos, 1, "_");
+			pos = tmp.find_first_of("-", pos);
+		}
+		for (size_t n = 0; n < tmp.size(); n++)
+			tmp[n] = toupper(tmp[n]);
+		envs["HTTP_" + tmp] = i->second;
+		std::cout << "HTTP_" + tmp << envs["HTTP_" + tmp] << std::endl;
+	}
 
 	_envs = _map_to_table_char(envs);
 }
