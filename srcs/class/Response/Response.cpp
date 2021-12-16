@@ -114,7 +114,6 @@ void    Response::get_method(void)
 {
     struct stat info;
 
-    Cgi  cgi(this->get_request());
     if (_req._conf.autoindex && _req._uri[_req._uri.length() - 1] == '/' && _req._conf.index.size() <= 1)
     {
         generate_index();
@@ -159,7 +158,6 @@ void    Response::post_method(void)
 {
     std::ofstream                fd;
 
-    Cgi  cgi(this->get_request());
     if (file_status(_req._conf.root + _req._uri) == 200)
         _ret_code = 200;
     else
