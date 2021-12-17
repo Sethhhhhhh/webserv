@@ -122,7 +122,9 @@ std::string	Cgi::execute(Request &request) {
 	write(fds[1], request.get_body().c_str(), request.get_body().length());
 	close(fds[1]);
 	wait(&status); 
-
+	for (int i = 0; _envs[i]; i++)
+		delete _envs[i];
+	delete[] _envs;
 	return (_read_file("webserv_cgi"));
 }
 
