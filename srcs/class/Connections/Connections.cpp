@@ -103,12 +103,11 @@ int Connections::check_clients() {
 			if ((*client)->request_is_ready())
 			{	
 				(*client)->wait_response();
-
 				close(fd);
 				FD_CLR(fd, &active_set);
 				fd_list.remove(fd);
 				max_fd = *std::max_element(fd_list.begin(), fd_list.end());
-				free(*client);
+				delete (*client);
 				client = clients.erase(client);
 			}
 		}

@@ -25,7 +25,7 @@ class Client
 		Client(int fd, Server *server);
 		Client(const Client &c);
 		Client& operator=(const Client &c);
-		~Client();
+		virtual ~Client();
 
 		void	receive_request(void);
 		void	wait_response(void);

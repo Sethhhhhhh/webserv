@@ -23,9 +23,7 @@ Client& Client::operator=(const Client &c)
 
 Client::~Client()
 {
-
 }
-
 
 int		Client::get_fd(void) const
 {
@@ -36,7 +34,6 @@ void	Client::wait_response(void)
 {
 	_server->respond(_fd, _request);
 }
-
 
 /*
 
@@ -90,8 +87,6 @@ void 	Client::receive_request(void)
 		_received_request += buffer;
 		_bytes_request += ret;
 
-		std::cout << _received_request << std::endl;
-
 		if (_received_request.find("\r\n\r\n") != std::string::npos) // HEADER FINI
 		{
 			if (_received_request.find("Content-Length") != std::string::npos)
@@ -117,10 +112,12 @@ void 	Client::receive_request(void)
 		}
 		else
 			break ;
-		//std::cout << "after" << std::endl;
 	}
-	std::cout << _received_request << std::endl;
-	std::cout << _bytes_request << std::endl;
+
+	MSG(GREEN, _received_request);
+	MSG(RED, _bytes_request);
+	
+	
 	_request.parse(_received_request, _server->get_config());
 	_ready_request = true;
 }
