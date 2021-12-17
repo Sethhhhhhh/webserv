@@ -83,6 +83,7 @@ class Request {
 			DONE
 		};
 		friend class Response;
+		friend class Cgi;
 };
 
 #endif

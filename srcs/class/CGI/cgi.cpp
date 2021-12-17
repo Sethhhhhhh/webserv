@@ -2,7 +2,6 @@
 
 Cgi::Cgi(Request &request) {
 	_init_envs(request);
-	execute(request);
 	return ;
 }
 
@@ -39,8 +38,8 @@ void	Cgi::_init_envs(Request &request) {
 	envs["REDIRECT_STATUS"] = "200";
 	envs["SERVER_PROTOCOL"] = "HTTP/1.1";
 	envs["PATH_INFO"] = request.get_conf().path;
-	envs["CONTENT_LENGTH"] = request.get_headers()["Content-length"];
-	envs["CONTENT_TYPE"] = request.get_headers()["Content-type"];
+	envs["CONTENT_LENGTH"] = request._headers["Content-Length: "];
+	envs["CONTENT_TYPE"] = request._headers["Content-Type: "];
 	envs["GATEWAY_INTERFACE"] = "CGI/1.1";
 	envs["PATH_TRANSLATED"] = request._conf.root + request._uri;
 	envs["QUERY_STRING"] = request._uri.substr(request._uri.find("?") + 1);
@@ -48,23 +47,19 @@ void	Cgi::_init_envs(Request &request) {
 	envs["REMOTE_HOST"] = "";
 	envs["REMOTE_IDENT"] = "";
 	envs["REMOTE_USER"] = "";
-	envs["REQUEST_METHOD"] = request.get_method();
-	envs["SERVER_PORT"] = to_string(request.get_conf().port);
+	envs["REQUEST_METHOD"] = request._method;
+	envs["SERVER_PORT"] = to_string(request._conf.port);
 	envs["SERVER_SOFTWARE"] = request._conf.names[0];
 	envs["SERVER_NAME"] = request._headers["Host: "];
-	std::map<std::string, std::string>	headers = request.get_headers();
-	for (std::map<std::string, std::string>::iterator i = headers.begin(); i != headers.end(); i++) {
-		std::string	tmp = i->first;
-		size_t pos = tmp.find_first_of("-");
-		while (pos != std::string::npos) {
-			tmp.replace(pos, 1, "_");
-			pos = tmp.find_first_of("-", pos);
-		}
-		for (size_t n = 0; n < tmp.size(); n++)
-			tmp[n] = toupper(tmp[n]);
-		envs["HTTP_" + tmp] = i->second;
-		std::cout << "HTTP_" + tmp << envs["HTTP_" + tmp] << std::endl;
-	}
+    envs["SCRIPT_NAME"] = request._conf.root + request._conf.cgi_path;
+    for (std::map<std::string, std::string>::iterator it = request._headers.begin(); it != request._headers.end(); it++)
+    {
+        std::string tmp = "HTTP_";
+        tmp += it->first;
+        std::replace(tmp.begin(), tmp.end(), '-', '_');
+        tmp = upper_case(tmp);
+        envs[tmp] = upper_case(it->second);
+    }
 
 	_envs = _map_to_table_char(envs);
 }
@@ -89,10 +84,9 @@ std::string	Cgi::execute(Request &request) {
 	int				status;
 	int				ret_fd;
 	int				fds[2];
-	char            **args;
+    char            **args;
 
-
-	args = (char**)malloc(sizeof(**args) * 3);
+    args = (char**)malloc(sizeof(**args) * 3);
     args[0] = (char*)(request._conf.root + request._conf.cgi_path).c_str();
     args[1] = (char*)(request._conf.root + request._uri).c_str();
     args[2] = NULL;
@@ -117,7 +111,6 @@ std::string	Cgi::execute(Request &request) {
 
 		exit(0);
 	}
-	free(args);
 	close(fds[0]);
 	write(fds[1], request.get_body().c_str(), request.get_body().length());
 	close(fds[1]);
