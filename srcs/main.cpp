@@ -9,7 +9,8 @@ int	main(int ac, char **av)
 		return error_msg( ERR_ARG );
 	try {
 		parse(connections.servers, av[1]);
-	} catch (std::exception &e) {
+	}
+	catch (std::exception &e) {
 		return error_msg( e.what() );
 	}
 

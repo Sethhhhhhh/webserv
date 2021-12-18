@@ -23,16 +23,6 @@ char    **Cgi::_map_to_table_char(std::map<std::string, std::string> map) {
 	return (envs_char);
 }
 
-std::string	Cgi::_get_query_string(std::string uri) {
-	std::string	query;
-	size_t		pos;
-	
-	pos = uri.find_first_of("?");
-	if (pos != std::string::npos)
-		query = uri.substr(uri.find_first_of("?") + 1, uri.size());
-	return (query);
-}
-
 void	Cgi::_init_envs(Request &request) {
 	std::map<std::string, std::string>	envs;
 
@@ -50,7 +40,7 @@ void	Cgi::_init_envs(Request &request) {
 	envs["REMOTE_USER"] = "";
 	envs["REQUEST_METHOD"] = request.get_method();
 	envs["SERVER_PORT"] = to_string(request.get_conf().port);
-	envs["SERVER_SOFTWARE"] = request._conf.names[0];
+	envs["SERVER_SOFTWARE"] = "webserv/1.0";
 	envs["SERVER_NAME"] = request._headers["Host: "];
 	std::map<std::string, std::string>	headers = request.get_headers();
 	for (std::map<std::string, std::string>::iterator i = headers.begin(); i != headers.end(); i++) {
@@ -91,13 +81,13 @@ std::string	Cgi::execute(Request &request) {
 	int				fds[2];
 	char            **args;
 
-
-	args = (char**)malloc(sizeof(**args) * 3);
+	if (!(args = (char**)malloc(sizeof(**args) * 3)))
+		return ("Status: 500\r\n\r\n");
     args[0] = (char*)(request._conf.root + request._conf.cgi_path).c_str();
     args[1] = (char*)(request._conf.root + request._uri).c_str();
     args[2] = NULL;
 	if (pipe(fds) == -1)
-		exit(0);
+		return ("Status: 500\r\n\r\n");
 	pid = fork();
 	if (pid == -1) {
 		return ("Status: 500\r\n\r\n");
@@ -107,6 +97,8 @@ std::string	Cgi::execute(Request &request) {
 		dup2(fds[0], 0);
 	
 		ret_fd = open("webserv_cgi", O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+		if (ret_fd < 0)
+			exit(0);
 
 		dup2(ret_fd, 1);
 		dup2(ret_fd, 2);
@@ -121,7 +113,7 @@ std::string	Cgi::execute(Request &request) {
 	close(fds[0]);
 	write(fds[1], request.get_body().c_str(), request.get_body().length());
 	close(fds[1]);
-	wait(&status); 
+	wait(&status);
 	for (int i = 0; _envs[i]; i++)
 		delete _envs[i];
 	delete[] _envs;

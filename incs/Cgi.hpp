@@ -27,9 +27,6 @@ class Cgi {
 		std::string	_get_query_string(std::string uri);
 
 		char								**_envs;
-		// char								**_args;
-		std::string                         _exe;
-		std::string                         _body;
 };
 
 #endif
