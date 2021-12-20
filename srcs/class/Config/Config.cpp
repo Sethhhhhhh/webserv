@@ -116,9 +116,6 @@ char	Config::set_client_max_body_size(std::string &content, int line_count) {
 	remove_extra_space(content, 0);
 	if (content.substr(0, content.size() - 1).empty())
 		throw Error("You must specify a client max body size.", line_count);
-
-	if (server->get_client_max_body_size())
-		throw Error("Client max body size already specified.", line_count);
 	if (content.find_first_not_of("0123456789MmGgKk;") != std::string::npos)
 		throw Error("Bad format.", line_count);
 	server->set_client_max_body_size(static_cast<size_t>(std::atol(content.c_str())));
