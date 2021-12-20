@@ -16,11 +16,13 @@ void	remove_extra_space(std::string & str, size_t pos) {
 
 char	parse(std::vector<Server> &servers, char *path) {
 	std::ifstream	file(path);
+	std::string		spath(path);
 	std::string		content;
 	Config			config;
+	int				line_count;
 
-	int			line_count;
-
+	if (".conf" != spath.substr(spath.size() - 5, spath.size()))
+		throw Config::Error("Bad extension.", 0);
 	if (!file.is_open()) {
 		throw Config::Error("Unable to open config file.", 0);
 	}
