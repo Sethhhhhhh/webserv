@@ -1,6 +1,8 @@
 #include "Config.hpp"
 
 char	Config::set_location_root(std::string &content, std::string &root, int line_count) {
+	char	tmp[256];
+	
 	content.erase(0, 4);
 	remove_extra_space(content, 0);
 	if (content.substr(0, content.size() - 1).empty())
@@ -11,9 +13,9 @@ char	Config::set_location_root(std::string &content, std::string &root, int line
 
 	if (content[0] != '/')
 		throw Error("Only absolute path accepted.", line_count);
-	root = content.substr(0, content.length() - 1);
+	getcwd(tmp, 256);
+	root = (tmp + content.substr(0, content.length() - 1));
 	content.erase();
-
 	return (0);
 }
 

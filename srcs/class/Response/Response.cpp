@@ -70,7 +70,7 @@ void    Response::generate_index(void)
 	struct dirent   *dirp;
 
     //https://www.delftstack.com/howto/c/opendir-in-c/
-	dp = opendir(("." + _req._conf.root + _req._uri).c_str());
+	dp = opendir((_req._conf.root + _req._uri).c_str());
     if (dp == NULL)
     {
         _ret_code = 500;
@@ -120,7 +120,6 @@ void    Response::get_method(void)
 
     if (_req._conf.autoindex && _req._uri[_req._uri.length() - 1] == '/' && _req._conf.index.size() <= 1)
     {
-        std::cout << "auto" << std::endl;
         generate_index();
         _ret_code = 200;
         return ;
