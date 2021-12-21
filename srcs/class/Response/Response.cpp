@@ -208,12 +208,21 @@ void    Response::generate_error_page(int error_code)
         }
 
         _headers["Allow: "] = methods;
-        read_html(_req._conf.root + _req._conf.error_pages[405], _body);
+        if (file_status(_req._conf.root + _req._conf.error_pages[error_code]) != 200)
+            _body = default_error_page(405);
+        else
+            read_html(_req._conf.root + _req._conf.error_pages[405], _body);
         _headers["Content-type: "] = MIME_types(_req._conf.error_pages[405]);
     }
     else
     {
-        read_html(_req._conf.root + _req._conf.error_pages[error_code], _body);
+        if (file_status(_req._conf.root + _req._conf.error_pages[error_code]) != 200)
+        {
+            std::cout << "test file not found" << std::endl;
+            _body = default_error_page(error_code);
+        }
+        else
+            read_html(_req._conf.root + _req._conf.error_pages[error_code], _body);
         _headers["Content-type: "] = MIME_types(_req._conf.error_pages[error_code]);
     }
 }

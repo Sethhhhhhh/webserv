@@ -111,6 +111,7 @@ std::string     read_html(std::string path, std::string &body);
 std::string     to_string(int n);
 std::string		get_current_time(void);
 int				file_status(std::string path);
+std::string	default_error_page(int error_code);
 
 int				error_msg(const char *msg);
 

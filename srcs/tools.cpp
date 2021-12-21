@@ -157,3 +157,16 @@ std::string	to_string(int n) {
 	s = ss.str();
 	return (s);
 }
+
+std::string	default_error_page(int error_code)
+{
+	std::string tmp;
+
+	tmp += "<!DOCTYPE html>\n<html>\n<title>";
+	tmp += status_code(error_code);
+	tmp += "</title>\n<body>\n<div>\n<H1>";
+	tmp += status_code(error_code);
+	tmp += "</H1>\n</div>\n</body>\n</html>\n";
+
+	return (tmp);
+}
