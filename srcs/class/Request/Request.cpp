@@ -60,13 +60,13 @@ void		Request::check_parsing(void)
 		_ret_code = 405;
 }
 
-void	Request::parse_body()
+void	Request::parse_body(u_long len_content)
 {
 	if (_headers.find("Content-Length") != _headers.end())
 	{
 		unsigned long length = atoi(_headers.find("Content-Length")->second.c_str());
 
-		if (_raw_request.length() == length)
+		if (len_content == length)
 		{
 			_body += _raw_request;
 			_ret_code = 200;
@@ -206,7 +206,7 @@ void		Request::parse_config(s_config conf)
 	_conf.port = conf.port;
 }
 
-void		Request::parse(std::string str, s_config conf)
+void		Request::parse(std::string str, s_config conf, u_long len_content)
 {
 	std::string		line;
 	std::string		key;
@@ -238,7 +238,7 @@ void		Request::parse(std::string str, s_config conf)
 	parse_language();
 	check_parsing();
 	if (_method == "POST" && _status == Request::BODY)
-		parse_body();
+		parse_body(len_content);
 	else
 		_status = Request::DONE;
 	print_request();

@@ -68,6 +68,7 @@ error, on doit gere ce cas propremement
 
 void 	Client::receive_request(void)
 {
+	u_long len_content;
 	char buffer[2024];
 	int ret;
 
@@ -86,7 +87,7 @@ void 	Client::receive_request(void)
 		buffer[ret] = 0;
 		_received_request += buffer;
 		_bytes_request += ret;
-
+		len_content = atoi(_received_request.substr(_received_request.find("Content-Length:") + 16).substr(0, _received_request.substr(_received_request.find("Content-Length:") + 16).find("\n")).c_str());
 		if (ret == 0)
 			break ;
 
@@ -94,7 +95,7 @@ void 	Client::receive_request(void)
 		{
 			if (_received_request.find("Content-Length") != std::string::npos)
 			{
-				u_long len_content = atoi(_received_request.substr(_received_request.find("Content-Length:") + 16).substr(0, _received_request.substr(_received_request.find("Content-Length:") + 16).find("\n")).c_str());
+				// len_content = atoi(_received_request.substr(_received_request.find("Content-Length:") + 16).substr(0, _received_request.substr(_received_request.find("Content-Length:") + 16).find("\n")).c_str());
 
 				if ((u_long)_bytes_request - _received_request.find("\r\n\r\n") >= len_content)
 				{
@@ -122,7 +123,7 @@ void 	Client::receive_request(void)
 	MSG(RED, _bytes_request);
 	
 	
-	_request.parse(_received_request, _server->get_config());
+	_request.parse(_received_request, _server->get_config(), len_content);
 	_ready_request = true;
 }
 

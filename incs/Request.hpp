@@ -45,11 +45,11 @@ class Request {
 		Request& operator=(const Request &c);
 		~Request();
 
-		void	parse(std::string str, s_config conf);
+		void	parse(std::string str, s_config conf, u_long);
 		void	parse_config(s_config conf);
 		void	print_request(void);
 		void	check_parsing(void);
-		void	parse_body(void);
+		void	parse_body( u_long );
 		void	parse_chunked_body(void);
 		void	parse_language(void);
 		void	print_config(void);
