@@ -35,7 +35,11 @@ void Server::respond(int fd, Request &request)
 	Response	res(request);
 	std::string  resp;
 
-	std::cout << res._raw_response.c_str() << std::endl;
+	// if (res._raw_response.size() > 200)
+	// 	std::cout << res._raw_response.substr(0, 197) + "..." << std::endl;
+	// else
+	// 	MSG(DFL, res._raw_response);
+
 	send(fd, res._raw_response.c_str(), res._raw_response.length(), 0);
 }
 

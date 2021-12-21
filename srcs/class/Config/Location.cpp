@@ -35,7 +35,6 @@ char	Config::set_location_client_max_body_size(std::string &content, unsigned in
 		client_max_body_size *= 1000;
 	content.erase();
 
-	// std::cout << client_max_body_size << std::endl;
 	return (0);
 }
 
@@ -135,10 +134,6 @@ char	Config::set_index(std::string &content, std::vector<std::string> &index, in
 		throw Error("Only .html or .php extension accepted.", line_count);
 	index.push_back(content.substr(0, content.length() - 1));
 	content.erase();
-
-	// for (std::vector<std::string>::iterator i = index.begin(); i != index.end(); i++) {
-	// 	std::cout << *i << std::endl;
-	// }
 
 	return (0);
 }

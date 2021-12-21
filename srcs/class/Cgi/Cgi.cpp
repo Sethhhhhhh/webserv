@@ -26,9 +26,6 @@ char    **Cgi::_map_to_table_char(std::map<std::string, std::string> map) {
 void	Cgi::_init_envs(Request &request) {
 	std::map<std::string, std::string>	envs;
 
-	for (std::map<std::string, std::string>::iterator it = request._headers.begin(); it != request._headers.end(); it++)
-		std::cout << it->first << " #" << it->second << std::endl;
-	std::cout << "omok " << request._headers["Content-Length"] << std::endl;
 	envs["REDIRECT_STATUS"] = "200";
 	envs["SERVER_PROTOCOL"] = "HTTP/1.1";
 	envs["PATH_INFO"] = request.get_conf().path;
@@ -57,9 +54,6 @@ void	Cgi::_init_envs(Request &request) {
 			tmp[n] = toupper(tmp[n]);
 		envs["HTTP_" + tmp] = i->second;
 	}
-
-	MSG(RED, envs["CONTENT_LENGTH"]);
-
 	_envs = _map_to_table_char(envs);
 }
 
@@ -107,8 +101,7 @@ std::string	Cgi::execute(Request &request) {
 		dup2(ret_fd, 1);
 		dup2(ret_fd, 2);
 
-		std::cout << "OK OK OK OK OK" << std::endl;
-		std::cout << execve(args[0], args, _envs) << std::endl;
+		execve(args[0], args, _envs);
 		
 		close(ret_fd);
 		close(fds[0]);

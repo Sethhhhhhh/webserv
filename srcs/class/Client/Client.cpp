@@ -11,12 +11,18 @@ Client::Client(int fd, Server *server) : _fd(fd), _server(server), _ready_reques
 
 Client::Client(const Client &c) : _fd(c._fd), _server(c._server)
 {
-	(void)c;
+	*this = c;
 }
 
 Client& Client::operator=(const Client &c)
 {
-	(void)c;
+
+		_fd = c._fd;
+		_server = c._server;
+		_request = c._request;
+		_ready_request = c._ready_request;
+		_received_request = c._received_request;
+		_bytes_request = c._bytes_request;
 
 	return *this;
 }
@@ -72,12 +78,6 @@ void 	Client::receive_request(void)
 	char buffer[2024];
 	int ret;
 
-	// recv peut retourner -1, 0
-
-	// while (_request.get_status() != Request::DONE)
-
-		// std::cout << "current req stat " << _request.get_status() << std::endl;
-
 	while (1)
 	{
 		bzero(buffer, 2024);
@@ -99,7 +99,6 @@ void 	Client::receive_request(void)
 
 				if ((u_long)_bytes_request - _received_request.find("\r\n\r\n") >= len_content)
 				{
-					std::cout << "BREAK RECEIVED" << std::endl;
 					break ;
 				}
 			}
@@ -107,7 +106,6 @@ void 	Client::receive_request(void)
 			{
 				if (_received_request.find("0\r\n\r\n") != std::string::npos)
 				{
-					std::cout << "BREAK PARTITION" << std::endl;
 					break ;
 				}
 
@@ -119,10 +117,14 @@ void 	Client::receive_request(void)
 			break ;
 	}
 
-	MSG(GREEN, _received_request);
-	MSG(RED, _bytes_request);
-	
-	
+
+	// ICI ON AFFICHE QUE 200 CHAR + ...
+
+	// if (_received_request.size() > 200)
+	// 	std::cout << _received_request.substr(0, 197) + "..." << std::endl;
+	// else
+	// 	MSG(DFL, _received_request);
+
 	_request.parse(_received_request, _server->get_config(), len_content);
 	_ready_request = true;
 }

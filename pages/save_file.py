@@ -1,0 +1,1 @@
+Content-type: text/html<html><body><form enctype="multipart/form-data" action="/cgi-bin/file_upload.py" method="post"><p>File: <input type="file" name="filename" /></p><p><input type="submit" value="Upload" name=action/></p></form><p>The file "parsing.cpp" was uploaded successfully</p></body></html>

@@ -1,6 +1,4 @@
 #include "Connections.hpp"
-#include <csignal>
-int	g_flag = 1;
 int nb_serv = 0;
 
 Connections::Connections() {
@@ -73,7 +71,7 @@ int Connections::init() {
 }
 
 int Connections::add_client(Server &server) {
-	Client *new_client;
+	Client new_client;
 	int		fd;
 
 	ready_fd--;
@@ -85,7 +83,7 @@ int Connections::add_client(Server &server) {
 		FD_SET(fd, &active_set);
 		fd_list.push_back(fd);
 		max_fd = *std::max_element(fd_list.begin(), fd_list.end());
-		new_client = new Client(fd, &server);
+		Client new_client(fd, &server);
 		clients.push_back(new_client);
 	}
 	else
@@ -96,22 +94,21 @@ int Connections::add_client(Server &server) {
 int Connections::check_clients() {
 	int fd;
 
-	for (std::vector<Client*>::iterator client = clients.begin(); 
+	for (std::vector<Client>::iterator client = clients.begin(); 
 	client != clients.end() && ready_fd != 0 ; client++)
 	{
-		fd = (*client)->get_fd();
+		fd = (client)->get_fd();
 		if (FD_ISSET(fd, &ready_rset))
 		{
 			ready_fd--;
-			(*client)->receive_request();
-			if ((*client)->request_is_ready())
+			(client)->receive_request();
+			if ((client)->request_is_ready())
 			{	
-				(*client)->wait_response();
+				(client)->wait_response();
 				close(fd);
 				FD_CLR(fd, &active_set);
 				fd_list.remove(fd);
 				max_fd = *std::max_element(fd_list.begin(), fd_list.end());
-				delete (*client);
 				client = clients.erase(client);
 			}
 		}
@@ -122,9 +119,10 @@ int Connections::check_clients() {
 
 void	Connections::ft_clear_clients( void )
 {
-	for (std::vector<Client*>::iterator cli_it = clients.begin();
+	for (std::vector<Client>::iterator cli_it = clients.begin();
 			cli_it != clients.end() && ready_fd != 0 ; cli_it++)
-		(*cli_it)->~Client();
+		(*cli_it).~Client();
+	clients.clear();
 }
 
 void	Connections::ft_clear_servers( void )
@@ -134,34 +132,16 @@ void	Connections::ft_clear_servers( void )
 		(*serv_it).~Server();
 }
 
-void sig_exit(int sig)
-{
-	if (sig == SIGINT)
-	{
-		MSG(RED, "SIGNAL REACH");
-		g_flag = 0;
-	}
-}
-
-void signal_handler(void)
-{
-	std::signal(SIGINT, sig_exit);
-}
-
 void	Connections::loop(void) 
 {
-
-	signal_handler();
 	MSG(YELLOW, " ----- Waiting for connection -----");
-	while (g_flag)
+	while (1)
 	{
 		ready_rset = active_set;
 		ready_fd = select(max_fd + 1, &ready_rset, 0, 0, 0);
 		for (std::vector<Server>::iterator server = servers.begin();
 			server != servers.end(); server++)
 		{
-			if (!g_flag)
-				break ;
 			if (FD_ISSET((server)->get_fd(), &ready_rset))
 				add_client(*server);
 		}

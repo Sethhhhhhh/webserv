@@ -31,7 +31,7 @@ class Connections
 		void	loop();
 
 		std::list<int> fd_list;
-		std::vector<Client*> clients;
+		std::vector<Client> clients;
 		std::vector<Server> servers;
 
 		void	ft_clear_clients( void );

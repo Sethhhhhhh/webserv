@@ -80,7 +80,6 @@ void    Response::generate_index(void)
     _body += "<h2>directory listing :</h2>\n";
 	while ((dirp = readdir(dp)) != NULL)
 	{
-        std::cout << dirp->d_name << std::endl;
 		_body += "<a href=\"" + _req._uri;
 		if (_req._uri[_req._uri.length() - 1] != '/')
 			_body += '/';
