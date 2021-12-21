@@ -1,6 +1,7 @@
 #include "Connections.hpp"
 #include <csignal>
 int	g_flag = 1;
+int nb_serv = 0;
 
 Connections::Connections() {
 }
@@ -46,7 +47,6 @@ int Connections::init() {
 		{
 			INFO(BLUE, "Error Binding PORT:", RED, (server)->get_port());
 			servers.erase(server);
-			g_flag = 0;
 			close (fd);
 			break ;
 		}
@@ -57,13 +57,13 @@ int Connections::init() {
 			close (fd);
 			break ;
 		}
-		
 		(server)->set_fd(fd);
 		FD_SET(fd, &active_set);
 		fd_list.push_back(fd);
 		max_fd = fd;
+		nb_serv++;
 	}
-	if (!g_flag)
+	if (nb_serv == 0)
 		return 1;
 	else
 	{
