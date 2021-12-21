@@ -153,7 +153,6 @@ s_location	Config::get_default_location(void) {
 
 	loc.path = "/";
 	loc.root = "";
-	loc.index.push_back("");
 	loc.autoindex = false;
 	loc.upload_eanable = false;
 	loc.cgi_path = "";

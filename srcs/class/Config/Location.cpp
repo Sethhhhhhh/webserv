@@ -122,16 +122,12 @@ char	Config::set_index(std::string &content, std::vector<std::string> &index, in
 	remove_extra_space(content, 0);
 	if (content.substr(0, content.size() - 1).empty())
 		throw Error("You must specify an index.", line_count);
-
-	pos = content.find_first_of(" ");
-	while (pos != std::string::npos) {
+	while ((pos = content.find_first_of(" ")) != std::string::npos) {
 		file = content.substr(0, pos);
-
-		if (file.substr(file.find_last_of(".")) != ".html" && file.substr(file.find_last_of(".")) != ".php")
+		if (file.substr(file.find_last_of("."), 5) != ".html" && file.substr(file.find_last_of("."), 4) != ".php")
 			return (1);
 		index.push_back(file);
 		content.erase(0, pos + 1);
-		pos = content.find_first_of(" ");
 	}
 
 	pos = content.find_last_of(".");
@@ -139,6 +135,10 @@ char	Config::set_index(std::string &content, std::vector<std::string> &index, in
 		throw Error("Only .html or .php extension accepted.", line_count);
 	index.push_back(content.substr(0, content.length() - 1));
 	content.erase();
+
+	// for (std::vector<std::string>::iterator i = index.begin(); i != index.end(); i++) {
+	// 	std::cout << *i << std::endl;
+	// }
 
 	return (0);
 }
