@@ -10,7 +10,7 @@ message = None
 # Test if the file is loaded for the upload
 if 'filename' in form:
     fileitem = form['filename']
-    fn = os.path.basename(fileitem.filename)
+    fn = os.path.basename(fileitem.filename.replace("\\", "/" ))
     open(fn, 'wb').write(fileitem.file.read())
     message = 'The file "' + fn + '" was uploaded successfully'
 else:

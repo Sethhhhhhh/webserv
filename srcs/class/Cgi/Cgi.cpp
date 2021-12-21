@@ -26,11 +26,14 @@ char    **Cgi::_map_to_table_char(std::map<std::string, std::string> map) {
 void	Cgi::_init_envs(Request &request) {
 	std::map<std::string, std::string>	envs;
 
+	for (std::map<std::string, std::string>::iterator it = request._headers.begin(); it != request._headers.end(); it++)
+		std::cout << it->first << " #" << it->second << std::endl;
+	std::cout << "omok " << request._headers["Content-Length"] << std::endl;
 	envs["REDIRECT_STATUS"] = "200";
 	envs["SERVER_PROTOCOL"] = "HTTP/1.1";
 	envs["PATH_INFO"] = request.get_conf().path;
-	envs["CONTENT_LENGTH"] = request.get_headers()["Content-Length: "];
-	envs["CONTENT_TYPE"] = request.get_headers()["Content-Type: "];
+	envs["CONTENT_LENGTH"] = request._headers["Content-Length"];
+	envs["CONTENT_TYPE"] = request._headers["Content-Type"];
 	envs["GATEWAY_INTERFACE"] = "CGI/1.1";
 	envs["PATH_TRANSLATED"] = request._conf.root + request._uri;
 	envs["QUERY_STRING"] = request._uri.substr(request._uri.find("?") + 1);
@@ -54,6 +57,8 @@ void	Cgi::_init_envs(Request &request) {
 			tmp[n] = toupper(tmp[n]);
 		envs["HTTP_" + tmp] = i->second;
 	}
+
+	MSG(RED, envs["CONTENT_LENGTH"]);
 
 	_envs = _map_to_table_char(envs);
 }
