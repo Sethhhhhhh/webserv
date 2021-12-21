@@ -87,6 +87,9 @@ void 	Client::receive_request(void)
 		_received_request += buffer;
 		_bytes_request += ret;
 
+		if (ret == 0)
+			break ;
+
 		if (_received_request.find("\r\n\r\n") != std::string::npos) // HEADER FINI
 		{
 			if (_received_request.find("Content-Length") != std::string::npos)
@@ -106,6 +109,7 @@ void 	Client::receive_request(void)
 					std::cout << "BREAK PARTITION" << std::endl;
 					break ;
 				}
+
 			}
 			else
 				break ;
