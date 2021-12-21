@@ -16,7 +16,7 @@ std::string	MIME_types(std::string	str)
 	std::string ret;
 	std::map<std::string, std::string> mimes;
 
-	if (str.length() > 0)
+	if (str.length() > 0 && (str.find('.') != std::string::npos))
 		ret = str.substr(str.find('.'));
 	else
 		ret = ".html";
