@@ -13,10 +13,8 @@ int	main(int ac, char **av)
 	catch (std::exception &e) {
 		return error_msg( e.what() );
 	}
-
-	if (connections.init() == -1)
+	if (connections.init() == 1)
 		return (1);
-
 	connections.loop();
 	return 0;
 }
