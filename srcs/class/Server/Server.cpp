@@ -26,8 +26,8 @@ Server& Server::operator=(const Server &c) {
 	return *this;
 }
 
-Server::~Server(void) {
-	return ;
+Server::~Server(void) 
+{
 }
 
 void Server::respond(int fd, Request &request) 

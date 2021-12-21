@@ -115,19 +115,55 @@ int Connections::check_clients() {
 	return 0;
 }
 
+#include <csignal>
+int	g_flag = 1;
+
+void	Connections::ft_clear_clients( void )
+{
+	for (std::vector<Client*>::iterator cli_it = clients.begin();
+			cli_it != clients.end() && ready_fd != 0 ; cli_it++)
+		(*cli_it)->~Client();
+}
+
+void	Connections::ft_clear_servers( void )
+{
+	for (std::vector<Server>::iterator serv_it = servers.begin();
+		serv_it != servers.end() && ready_fd != 0 ; serv_it++)
+		(*serv_it).~Server();
+}
+
+void sig_exit(int sig)
+{
+	if (sig == SIGINT)
+	{
+		MSG(RED, "SIGNAL REACH");
+		g_flag = 0;
+	}
+}
+
+void signal_handler(void)
+{
+	std::signal(SIGINT, sig_exit);
+}
+
 void	Connections::loop(void) 
 {
+
+	signal_handler();
 	MSG(YELLOW, " ----- Waiting for connection -----");
-	while (1)
+	while (g_flag)
 	{
 		ready_rset = active_set;
 		ready_fd = select(max_fd + 1, &ready_rset, 0, 0, 0);
 		for (std::vector<Server>::iterator server = servers.begin();
 			server != servers.end(); server++)
 		{
+			if (!g_flag)
+				break ;
 			if (FD_ISSET((server)->get_fd(), &ready_rset))
 				add_client(*server);
 		}
 		check_clients();
 	}
+	ft_clear_clients();
 }

@@ -18,6 +18,7 @@ class Connections
 		int		ready_fd;
 		int		max_fd;
 		
+
 	public:
 		Connections();
 		Connections(const Connections &c);
@@ -33,6 +34,8 @@ class Connections
 		std::vector<Client*> clients;
 		std::vector<Server> servers;
 
+		void	ft_clear_clients( void );
+		void	ft_clear_servers( void );
 };
 
 #endif
