@@ -1,4 +1,6 @@
 #include "Connections.hpp"
+#include <csignal>
+int	g_flag = 1;
 
 Connections::Connections() {
 }
@@ -31,27 +33,29 @@ int Connections::init() {
 
 		fd = socket(AF_INET, SOCK_STREAM, 0);
 		if (fd == -1)
-			continue ;
+			break ;
 		if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval,
 			sizeof(optval)) == -1)
 		{
 			close(fd);
-			continue ;
+			break ;
 		}
 		addr.sin_addr.s_addr = inet_addr((server)->get_host().c_str());
 		addr.sin_port = htons((server)->get_port());
-		INFO(BLUE, "OPEN PORT", GREEN, (server)->get_port());
 		if (bind(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
 		{
+			INFO(BLUE, "Error Binding PORT:", RED, (server)->get_port());
 			servers.erase(server);
+			g_flag = 0;
 			close (fd);
-			continue ;
+			break ;
 		}
+		INFO(BLUE, "OPEN PORT", GREEN, (server)->get_port());
 		if (listen(fd, SOMAXCONN) < 0)
 		{
 			servers.erase(server);
 			close (fd);
-			continue ;
+			break ;
 		}
 		
 		(server)->set_fd(fd);
@@ -59,8 +63,8 @@ int Connections::init() {
 		fd_list.push_back(fd);
 		max_fd = fd;
 	}
-	if (servers.size() == 0)
-		return -1;
+	if (!g_flag)
+		return 1;
 	else
 	{
 		max_fd = *std::max_element(	fd_list.begin(), fd_list.end());
@@ -115,8 +119,6 @@ int Connections::check_clients() {
 	return 0;
 }
 
-#include <csignal>
-int	g_flag = 1;
 
 void	Connections::ft_clear_clients( void )
 {
