@@ -162,6 +162,8 @@ void    Response::post_method(void)
 {
     std::ofstream                fd;
 
+    
+
     if (file_status(_req._conf.root + _req._uri) == 200)
         _ret_code = 200;
     else
@@ -172,9 +174,12 @@ void    Response::post_method(void)
         else
         {
             _ret_code = 201;
-            fd << _req._body;
+            // fd << _req._body;
+            Cgi cgi(_req);
+            fd << cgi.execute(_req);
         }
     }
+
 }
 
 void    Response::delete_method(void)

@@ -29,8 +29,8 @@ void	Cgi::_init_envs(Request &request) {
 	envs["REDIRECT_STATUS"] = "200";
 	envs["SERVER_PROTOCOL"] = "HTTP/1.1";
 	envs["PATH_INFO"] = request.get_conf().path;
-	envs["CONTENT_LENGTH"] = request.get_headers()["Content-length"];
-	envs["CONTENT_TYPE"] = request.get_headers()["Content-type"];
+	envs["CONTENT_LENGTH"] = request.get_headers()["Content-Length: "];
+	envs["CONTENT_TYPE"] = request.get_headers()["Content-Type: "];
 	envs["GATEWAY_INTERFACE"] = "CGI/1.1";
 	envs["PATH_TRANSLATED"] = request._conf.root + request._uri;
 	envs["QUERY_STRING"] = request._uri.substr(request._uri.find("?") + 1);
@@ -41,7 +41,7 @@ void	Cgi::_init_envs(Request &request) {
 	envs["REQUEST_METHOD"] = request.get_method();
 	envs["SERVER_PORT"] = to_string(request.get_conf().port);
 	envs["SERVER_SOFTWARE"] = "webserv/1.0";
-	envs["SERVER_NAME"] = request._headers["Host: "];
+	envs["SERVER_NAME"] = request._headers["Host"];
 	std::map<std::string, std::string>	headers = request.get_headers();
 	for (std::map<std::string, std::string>::iterator i = headers.begin(); i != headers.end(); i++) {
 		std::string	tmp = i->first;
@@ -53,7 +53,6 @@ void	Cgi::_init_envs(Request &request) {
 		for (size_t n = 0; n < tmp.size(); n++)
 			tmp[n] = toupper(tmp[n]);
 		envs["HTTP_" + tmp] = i->second;
-		std::cout << "HTTP_" + tmp << envs["HTTP_" + tmp] << std::endl;
 	}
 
 	_envs = _map_to_table_char(envs);
@@ -83,8 +82,8 @@ std::string	Cgi::execute(Request &request) {
 
 	if (!(args = (char**)malloc(sizeof(**args) * 3)))
 		return ("Status: 500\r\n\r\n");
-    args[0] = (char*)(request._conf.root + request._conf.cgi_path).c_str();
-    args[1] = (char*)(request._conf.root + request._uri).c_str();
+    args[0] = strdup((request._conf.root + request._conf.cgi_path).c_str());
+    args[1] = strdup((request._conf.root + request._uri).c_str());
     args[2] = NULL;
 	if (pipe(fds) == -1)
 		return ("Status: 500\r\n\r\n");
@@ -103,7 +102,9 @@ std::string	Cgi::execute(Request &request) {
 		dup2(ret_fd, 1);
 		dup2(ret_fd, 2);
 
+		std::cout << "OK OK OK OK OK" << std::endl;
 		std::cout << execve(args[0], args, _envs) << std::endl;
+		
 		close(ret_fd);
 		close(fds[0]);
 
@@ -114,9 +115,9 @@ std::string	Cgi::execute(Request &request) {
 	write(fds[1], request.get_body().c_str(), request.get_body().length());
 	close(fds[1]);
 	wait(&status);
-	for (int i = 0; _envs[i]; i++)
-		delete _envs[i];
-	delete[] _envs;
+	// for (int i = 0; _envs[i]; i++)
+	// 	delete _envs[i];
+	// delete[] _envs;
 	return (_read_file("webserv_cgi"));
 }
 
