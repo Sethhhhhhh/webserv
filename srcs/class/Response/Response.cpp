@@ -162,24 +162,20 @@ void    Response::post_method(void)
 {
     std::ofstream                fd;
 
-    
-
     if (file_status(_req._conf.root + _req._uri) == 200)
+    {
         _ret_code = 200;
+        remove((_req._conf.root + _req._uri).c_str());
+    }
+    fd.open((_req._conf.root + _req._uri).c_str(), std::ofstream::out);
+    if (file_status(_req._conf.root + _req._uri) != 200)
+        _ret_code = 403;
     else
     {
-        fd.open((_req._conf.root + _req._uri).c_str(), std::ofstream::out);
-        if (file_status(_req._conf.root + _req._uri) != 200)
-            _ret_code = 403;
-        else
-        {
-            _ret_code = 201;
-            // fd << _req._body;
-            Cgi cgi(_req);
-            fd << cgi.execute(_req);
-        }
+        _ret_code = 201;
+        Cgi cgi(_req);
+        fd << cgi.execute(_req);
     }
-
 }
 
 void    Response::delete_method(void)

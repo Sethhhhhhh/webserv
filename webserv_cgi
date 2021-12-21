@@ -7,7 +7,7 @@ Content-type: text/html
 <p>File: <input type="file" name="filename" /></p>
 <p><input type="submit" value="Upload" name=action/></p>
 </form>
-<p>The file "tasks.c" was uploaded successfully</p>
+<p>The file "Cgi.hpp" was uploaded successfully</p>
 </body>
 </html>
 
