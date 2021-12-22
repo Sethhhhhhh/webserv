@@ -87,7 +87,6 @@ void 	Client::receive_request(void)
 		buffer[ret] = 0;
 		_received_request += buffer;
 		_bytes_request += ret;
-		len_content = atoi(_received_request.substr(_received_request.find("Content-Length:") + 16).substr(0, _received_request.substr(_received_request.find("Content-Length:") + 16).find("\n")).c_str());
 		if (ret == 0)
 			break ;
 
@@ -95,7 +94,7 @@ void 	Client::receive_request(void)
 		{
 			if (_received_request.find("Content-Length") != std::string::npos)
 			{
-				// len_content = atoi(_received_request.substr(_received_request.find("Content-Length:") + 16).substr(0, _received_request.substr(_received_request.find("Content-Length:") + 16).find("\n")).c_str());
+				len_content = atoi(_received_request.substr(_received_request.find("Content-Length:") + 16).substr(0, _received_request.substr(_received_request.find("Content-Length:") + 16).find("\n")).c_str());
 
 				if ((u_long)_bytes_request - _received_request.find("\r\n\r\n") >= len_content)
 				{
@@ -120,10 +119,10 @@ void 	Client::receive_request(void)
 
 	// ICI ON AFFICHE QUE 200 CHAR + ...
 
-	// if (_received_request.size() > 200)
-	// 	std::cout << _received_request.substr(0, 197) + "..." << std::endl;
-	// else
-	// 	MSG(DFL, _received_request);
+	 if (_received_request.size() > 200)
+	 	std::cout << _received_request.substr(0, 197) + "..." << std::endl;
+	 else
+	 	MSG(DFL, _received_request);
 
 	_request.parse(_received_request, _server->get_config(), len_content);
 	_ready_request = true;

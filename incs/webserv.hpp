@@ -100,8 +100,6 @@ typedef struct  s_chunk
 
 }               t_chunk;
 
-size_t	        count_char_in_string(std::string & s, char c);
-void	        remove_extra_space(std::string & str, size_t pos);
 
 std::string		cut_line(std::string &str, bool cond, int back);
 std::string		MIME_types(std::string	str);
@@ -110,11 +108,11 @@ std::string	    status_code(int code);
 std::string     read_html(std::string path, std::string &body);
 std::string     to_string(int n);
 std::string		get_current_time(void);
-int				file_status(std::string path);
-std::string	default_error_page(int error_code);
-
-int				error_msg(const char *msg);
-
+std::string	    default_error_page(int error_code);
 std::string	    to_string(int n);
+size_t	        count_char_in_string(std::string & s, char c);
+int				file_status(std::string path);
+int				error_msg(const char *msg);
+void	        remove_extra_space(std::string & str, size_t pos);
 
 #endif

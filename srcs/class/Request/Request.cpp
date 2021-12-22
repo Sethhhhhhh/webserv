@@ -56,7 +56,8 @@ void		Request::check_parsing(void)
 	if (_headers.find("Host") == _headers.end())
 		_ret_code = 400;
 
-	if (std::find(_conf.methods.begin(), _conf.methods.end(), _method) == _conf.methods.end())
+	std::vector<std::string>::iterator it = find(_conf.methods.begin(), _conf.methods.end(), _method);
+	if (it == _conf.methods.end())
 		_ret_code = 405;
 }
 
@@ -186,6 +187,7 @@ void		Request::parse_config(s_config conf)
 	_conf.names = conf.names;
 	_conf.host = conf.host;
 	_conf.root = (tmp.root != "") ? tmp.root : conf.root;
+	
 	if (tmp.methods.size() == 0)
 	{
 		_conf.methods.push_back("GET");
@@ -237,11 +239,10 @@ void		Request::parse(std::string str, s_config conf, u_long len_content)
 	_status = Request::BODY;
 	parse_language();
 	check_parsing();
-	if (_method == "POST" && _status == Request::BODY)
+	if (_method == "POST" && _status == Request::BODY && _ret_code < 400)
 		parse_body(len_content);
 	else
 		_status = Request::DONE;
-	print_request();
 }
 
 void	Request::print_request(void)
