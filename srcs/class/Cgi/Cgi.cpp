@@ -81,7 +81,7 @@ std::string	Cgi::execute(Request &request) {
 
 	if (!(args = (char**)malloc(sizeof(**args) * 3)))
 		return ("Status: 500\r\n\r\n");
-    args[0] = strdup((request._conf.root + request._conf.cgi_path).c_str());
+    args[0] = strdup((request._conf.root + request._conf.cgi_path + request._conf.cgi_extension[0]).c_str());
     args[1] = strdup((request._conf.root + request._uri).c_str());
     args[2] = NULL;
 	if (pipe(fds) == -1)

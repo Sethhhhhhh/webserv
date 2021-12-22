@@ -159,21 +159,24 @@ void    Response::get_method(void)
 
 void    Response::post_method(void)
 {
-    std::ofstream                fd;
+    std::ofstream fd;
 
-    if (file_status(_req._conf.root + _req._uri) == 200)
+    if (_req._conf.cgi_path != "")
     {
         _ret_code = 200;
-        remove((_req._conf.root + _req._uri).c_str());
+        Cgi cgi(_req);
+        _body += cgi.execute(_req);
+        _headers["Content-type: "] = MIME_types("");
     }
-    fd.open((_req._conf.root + _req._uri).c_str(), std::ofstream::out);
-    if (file_status(_req._conf.root + _req._uri) != 200)
-        _ret_code = 403;
     else
     {
-        _ret_code = 201;
-        Cgi cgi(_req);
-        fd << cgi.execute(_req);
+        if (file_status(_req._conf.root + _req._uri) == 403)
+            _ret_code = 403;
+        else
+        {
+            fd.open((_req._conf.root + _req._uri).c_str(), std::ofstream::out);
+            _ret_code = 201;
+        }
     }
 }
 

@@ -2,7 +2,6 @@
 import cgi, sys, os
 import cgitb; cgitb.enable()
 form = cgi.FieldStorage()
-print('Content-type: text/html')
 sys.path.insert(0, os.getcwd())
 
 message = None
@@ -19,7 +18,7 @@ else:
 replyhtml = """
 <html>
 <body>
-<form enctype="multipart/form-data" action="/cgi-bin/file_upload.py" method="post">
+<form enctype="multipart/form-data" action="../webserv_cgi" method="post">
 <p>File: <input type="file" name="filename" /></p>
 <p><input type="submit" value="Upload" name=action/></p>
 </form>
