@@ -117,6 +117,14 @@ void    Response::get_method(void)
 {
     struct stat info;
 
+    if (_req._uri.find("?") != std::string::npos)
+    {
+        _ret_code = 200;
+        Cgi cgi(_req);
+        _body += cgi.execute(_req);
+        _headers["Content-type: "] = MIME_types("");
+        return ;
+    }
     if (_req._conf.autoindex && _req._uri[_req._uri.length() - 1] == '/' && _req._conf.index.size() <= 1)
     {
         generate_index();

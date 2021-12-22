@@ -1,11 +1,7 @@
+Content-type: text/html
 
 <html>
 <body>
-<form enctype="multipart/form-data" action="/upload.html" method="post">
-<p>File: <input type="file" name="filename" /></p>
-<p><input type="submit" value="Upload" name=action/></p>
-</form>
-<p>The file "download (3)" was uploaded successfully</p>
+<h1>The value entered was: Name=bobo</h1>
 </body>
 </html>
-
