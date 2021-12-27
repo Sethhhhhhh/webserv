@@ -184,6 +184,8 @@ void    Response::post_method(void)
         {
             fd.open((_req._conf.root + _req._uri).c_str(), std::ofstream::out);
             _ret_code = 201;
+            fd << _req._body;
+            fd.close();
         }
     }
 }
